@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Bilem
+=======
+# Back-end
+>>>>>>> fb13ce1 (Initial commit)
 
 
 
@@ -15,14 +19,22 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
+<<<<<<< HEAD
 git remote add origin https://gitlab.com/teamtwo2/Bilem.git
+=======
+git remote add origin https://gitlab.com/team1neobis/back-end.git
+>>>>>>> fb13ce1 (Initial commit)
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
+<<<<<<< HEAD
 - [ ] [Set up project integrations](https://gitlab.com/teamtwo2/Bilem/-/settings/integrations)
+=======
+- [ ] [Set up project integrations](https://gitlab.com/team1neobis/back-end/-/settings/integrations)
+>>>>>>> fb13ce1 (Initial commit)
 
 ## Collaborate with your team
 
