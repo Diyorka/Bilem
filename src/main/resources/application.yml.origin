@@ -30,3 +30,4 @@ app:
   jwtSecret: 397A24432646294A404E635266546A576E5A7234753778214125442A472D4B61
   jwtExpirationInMs: 3600000
   refreshExpirationInMs: 604800000
+  recoveryValidityInSeconds: 7200
