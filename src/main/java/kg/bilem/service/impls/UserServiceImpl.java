@@ -14,7 +14,6 @@ import kg.bilem.model.RefreshToken;
 import kg.bilem.model.User;
 import kg.bilem.repository.RefreshTokenRepository;
 import kg.bilem.repository.UserRepository;
-import kg.bilem.service.JwtService;
 import kg.bilem.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

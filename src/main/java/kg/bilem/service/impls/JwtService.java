@@ -1,4 +1,4 @@
-package kg.bilem.service;
+package kg.bilem.service.impls;
 
 
 import io.jsonwebtoken.Claims;
