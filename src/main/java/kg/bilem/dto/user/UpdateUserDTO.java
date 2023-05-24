@@ -11,12 +11,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateUserDTO {
-    String username;
+    String name;
 
     @Email(message = "Почта некорректна")
     String email;
-
-    String fullName;
 
     String about_me;
 

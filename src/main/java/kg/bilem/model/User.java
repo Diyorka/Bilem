@@ -21,9 +21,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User extends BaseEntity implements UserDetails {
-    String fullName;
-
-    String username;
+    String name;
 
     String email;
 
@@ -36,8 +34,6 @@ public class User extends BaseEntity implements UserDetails {
     Role role;
 
     String image_url;
-
-    String token;
 
     @Column(length = 500)
     String about_me;
@@ -83,10 +79,6 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
-    }
-
-    public String getRealUsername(){
-        return username;
     }
 
     @Override

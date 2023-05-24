@@ -8,16 +8,21 @@ import kg.bilem.dto.user.UpdateUserDTO;
 import kg.bilem.enums.Role;
 import kg.bilem.enums.Status;
 import kg.bilem.exception.AlreadyExistException;
+import kg.bilem.exception.NotFoundException;
 import kg.bilem.exception.TokenNotValidException;
 import kg.bilem.exception.UserAlreadyExistException;
+import kg.bilem.model.RecoveryToken;
 import kg.bilem.model.RefreshToken;
 import kg.bilem.model.User;
+import kg.bilem.repository.RecoveryTokenRepository;
 import kg.bilem.repository.RefreshTokenRepository;
 import kg.bilem.repository.UserRepository;
 import kg.bilem.service.UserService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -26,53 +31,48 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 import static kg.bilem.dto.user.GetUserDTO.toGetUserDto;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final EmailServiceImpl emailService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RecoveryTokenRepository recoveryTokenRepository;
     private final ModelMapper modelMapper;
 
     public ResponseEntity<String> register(CreateUserDTO request) throws UserAlreadyExistException {
-        if (repository.existsByEmail(request.getEmail()))
+        if (userRepository.existsByEmail(request.getEmail()))
             throw new UserAlreadyExistException(
                     "email",
                     "Пользователь с такой почтой уже существует"
             );
-        if (repository.existsByUsername(request.getUsername()))
-            throw new UserAlreadyExistException(
-                    "username",
-                    "Пользователь с таким никнеймом уже существует"
-            );
-        if(!request.getPassword().equals(request.getConfirmPassword())){
+
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
             return ResponseEntity.badRequest().body("Пароли не совпадают");
         }
 
-        Random random = new Random();
-        String token = String.valueOf(random.nextInt(100000, 999999));
-        while (repository.existsByToken(token)) {
-            token = String.valueOf(random.nextInt(100000, 999999));
-        }
-
         var user = buildUser(request);
-        user.setToken(token);
-        repository.save(user);
+        userRepository.save(user);
+
+        RecoveryToken recoveryToken = constructToken(user);
+        recoveryTokenRepository.save(recoveryToken);
 
         SimpleMailMessage activationEmail = new SimpleMailMessage();
-        activationEmail.setFrom("laptopKG@gmail.com");
+        activationEmail.setFrom("bilem@gmail.com");
         activationEmail.setTo(user.getEmail());
         activationEmail.setSubject("Активация аккаунта");
-        activationEmail.setText("Для активации аккаунта введите следующий код: " + user.getToken());
+        activationEmail.setText("Для активации аккаунта введите следующий код: " + recoveryToken.getToken() +
+                                "\nИстекает " + recoveryToken.getExpireAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
 
         emailService.sendEmail(activationEmail);
         log.info("Код успешно отправлен на почту " + user.getEmail());
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmail(request.getEmail())
+        var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
 
         final String userEmail;
         userEmail = jwtService.extractUsername(refreshToken);
-        var user = repository.findByEmail(userEmail).orElseThrow();
+        var user = userRepository.findByEmail(userEmail).orElseThrow();
 
         if (!jwtService.isTokenValid(refreshToken, user)) {
             throw new TokenNotValidException("Токен не валидный");
@@ -136,62 +136,77 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResponseEntity<String> activateAccount(String token) {
-        Optional<User> user = repository.findByToken(token);
+        RecoveryToken recoveryToken = recoveryTokenRepository.findByToken(token)
+                .orElseThrow(
+                        () -> new TokenNotValidException("Неверный код")
+                );
 
-        if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Неверный код");
-        }
+        User activateUser = userRepository.findById(recoveryToken.getUser().getId())
+                .orElseThrow(
+                        () -> new NotFoundException("Пользователь не найден")
+                );
 
-        User activateUser = user.get();
         activateUser.setStatus(Status.ACTIVE);
+        userRepository.save(activateUser);
 
-        activateUser.setToken(null);
-        repository.save(activateUser);
-        return ResponseEntity.ok().body("Аккаунт успешно активирован!");
+        recoveryToken.setToken(null);
+        recoveryToken.setExpireAt(null);
+        recoveryToken.setCreatedAt(null);
+        recoveryTokenRepository.save(recoveryToken);
 
+        return ResponseEntity.ok("Аккаунт успешно активирован!");
     }
 
     @Override
     public GetUserDTO changeUserInfo(UpdateUserDTO userDto, User user) {
-        if (!userDto.getEmail().equals(user.getEmail()) && repository.existsByEmail(userDto.getEmail())) {
+        if (!userDto.getEmail().equals(user.getEmail()) && userRepository.existsByEmail(userDto.getEmail())) {
             throw new AlreadyExistException("Пользователь с такой почтой уже зарегистрирован");
         }
 
         modelMapper.map(userDto, user);
-        repository.save(user);
+        userRepository.save(user);
 
         return toGetUserDto(user);
     }
 
     @Override
     public ResponseEntity<String> addAdmin(CreateUserDTO userDto) {
-        if (repository.existsByEmail(userDto.getEmail()))
+        if (userRepository.existsByEmail(userDto.getEmail()))
             throw new UserAlreadyExistException(
                     "email",
                     "Пользователь с такой почтой уже существует"
-            );
-        if (repository.existsByUsername(userDto.getUsername()))
-            throw new UserAlreadyExistException(
-                    "username",
-                    "User with this username is already exists"
             );
 
         var user = buildUser(userDto);
         user.setRole(Role.ADMIN);
         user.setStatus(Status.ACTIVE);
-        repository.save(user);
+        userRepository.save(user);
 
         return ResponseEntity.ok("Администратор успешно добавлен");
     }
 
     private User buildUser(CreateUserDTO userDto) {
         return User.builder()
-                .username(userDto.getUsername())
+                .name(userDto.getName())
                 .email(userDto.getEmail())
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .role(Role.STUDENT)
                 .status(Status.NOT_ACTIVATED)
-                .token(null)
+                .build();
+    }
+
+    private RecoveryToken constructToken(User user) {
+        Random random = new Random();
+        String token = String.valueOf(random.nextInt(100000, 999999));
+        while (recoveryTokenRepository.existsByToken(token)) {
+            token = String.valueOf(random.nextInt(100000, 999999));
+        }
+
+        return RecoveryToken.builder()
+                .user(user)
+                .token(token)
+                .expireAt(LocalDateTime.now().plusMonths(6))
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 }

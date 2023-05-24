@@ -12,9 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GetUserDTO {
-    String fullName;
-
-    String username;
+    String name;
 
     String email;
 
@@ -48,8 +46,7 @@ public class GetUserDTO {
 
     public static GetUserDTO toGetUserDto(User user){
         return GetUserDTO.builder()
-                .fullName(user.getFullName())
-                .username(user.getRealUsername())
+                .name(user.getName())
                 .email(user.getEmail())
                 .imageUrl(user.getImage_url())
                 .about_me(user.getAbout_me())
