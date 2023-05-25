@@ -65,15 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         RecoveryToken recoveryToken = constructToken(user);
         recoveryTokenRepository.save(recoveryToken);
 
-        SimpleMailMessage activationEmail = new SimpleMailMessage();
-        activationEmail.setFrom("bilem@gmail.com");
-        activationEmail.setTo(user.getEmail());
-        activationEmail.setSubject("Активация аккаунта");
-        activationEmail.setText("Для активации аккаунта введите следующий код: " + recoveryToken.getToken() +
-                "\nИстекает " + recoveryToken.getExpireAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
-
-        emailService.sendEmail(activationEmail);
-        log.info("Код успешно отправлен на почту " + user.getEmail());
+        sendToken(recoveryToken, user);
 
         return ResponseEntity.ok("Успешная регистрация! Ваш код активации был отправлен на почту.");
     }
@@ -130,12 +122,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         activateUser.setStatus(Status.ACTIVE);
         userRepository.save(activateUser);
 
-        recoveryToken.setToken(null);
-        recoveryToken.setExpireAt(null);
-        recoveryToken.setCreatedAt(null);
-        recoveryTokenRepository.save(recoveryToken);
+        recoveryTokenRepository.delete(recoveryToken);
 
         return ResponseEntity.ok("Аккаунт успешно активирован!");
+    }
+
+    @Override
+    public ResponseEntity<String> logout(User user) {
+        RefreshToken refreshToken = refreshTokenRepository.findByUser(user);
+        refreshTokenRepository.delete(refreshToken);
+        return ResponseEntity.ok("Успешный выход");
+    }
+
+    private void sendToken(RecoveryToken recoveryToken, User user) {
+        SimpleMailMessage activationEmail = new SimpleMailMessage();
+        activationEmail.setFrom("bilem@gmail.com");
+        activationEmail.setTo(user.getEmail());
+        activationEmail.setSubject("Активация аккаунта");
+        activationEmail.setText("Для активации аккаунта введите следующий код: " + recoveryToken.getToken() +
+                "\nИстекает " + recoveryToken.getExpireAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
+
+        emailService.sendEmail(activationEmail);
+        log.info("Код успешно отправлен на почту " + user.getEmail());
     }
 
     private User buildUser(CreateUserDTO userDto) {
@@ -158,7 +166,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return RecoveryToken.builder()
                 .user(user)
                 .token(token)
-                .expireAt(LocalDateTime.now().plusMonths(6))
+                .expireAt(LocalDateTime.now().plusDays(1))
                 .createdAt(LocalDateTime.now())
                 .build();
     }

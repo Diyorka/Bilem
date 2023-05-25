@@ -41,8 +41,8 @@ public class PasswordController {
         return passwordService.setNewPassword(token, resetPasswordDTO);
     }
 
-    @PostMapping("/change")
     @SecurityRequirement(name = "JWT")
+    @PostMapping("/change")
     @Operation(
             summary = "Смена пароля авторизованного пользователя"
     )

@@ -23,8 +23,10 @@ import java.time.LocalDateTime;
 public class RecoveryToken extends BaseEntity{
     String token;
 
+    @Column(name = "expire_at")
     LocalDateTime expireAt;
 
+    @Column(name = "created_at")
     LocalDateTime createdAt;
 
     @OneToOne

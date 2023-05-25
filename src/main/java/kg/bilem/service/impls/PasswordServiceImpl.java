@@ -41,25 +41,20 @@ public class PasswordServiceImpl implements PasswordService {
                         () -> new NotFoundException("Пользователь с почтой " + userEmail + " не найден")
                 );
 
-        RecoveryToken getToken = recoveryTokenRepository.findByUser(user);
-        if(getToken.getExpireAt() != null &&
-                Duration.between(getToken.getCreatedAt(), LocalDateTime.now()).toMinutes() < 1){
-            return ResponseEntity.badRequest().body("С последнего запроса прошло меньше минуты, попробуйте повторно позже");
+        if (!recoveryTokenRepository.existsByUser(user)) {
+            RecoveryToken recoveryToken = constructToken(user);
+            recoveryTokenRepository.save(recoveryToken);
+            sendToken(recoveryToken, user);
+        } else {
+            RecoveryToken getToken = recoveryTokenRepository.findByUser(user);
+            if(Duration.between(getToken.getCreatedAt(), LocalDateTime.now()).toMinutes() < 1){
+                return ResponseEntity.badRequest().body("С последнего запроса прошло меньше минуты, попробуйте повторно позже");
+            }
+            recoveryTokenRepository.delete(getToken);
+            RecoveryToken recoveryToken = constructToken(user);
+            recoveryTokenRepository.save(recoveryToken);
+            sendToken(recoveryToken, user);
         }
-
-        RecoveryToken recoveryToken = constructToken(user);
-        recoveryToken.setId(getToken.getId());
-        recoveryTokenRepository.save(recoveryToken);
-
-        SimpleMailMessage activationEmail = new SimpleMailMessage();
-        activationEmail.setFrom("bilem@gmail.com");
-        activationEmail.setTo(user.getEmail());
-        activationEmail.setSubject("Сброс пароля");
-        activationEmail.setText("Для создания нового пароля введите следующий код: " + recoveryToken.getToken() +
-                                "\nИстекает " + recoveryToken.getExpireAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
-
-        emailService.sendEmail(activationEmail);
-        log.info("Код успешно отправлен на почту " + user.getEmail());
 
         return ResponseEntity.ok("Ваш код сброса пароля был отправлен на почту.");
     }
@@ -71,7 +66,7 @@ public class PasswordServiceImpl implements PasswordService {
                         () -> new TokenNotValidException("Неверный код")
                 );
 
-        if(LocalDateTime.now().isAfter(recoveryToken.getExpireAt())){
+        if (LocalDateTime.now().isAfter(recoveryToken.getExpireAt())) {
             throw new TokenNotValidException("Время действия кода истекло, запросите новый");
         }
 
@@ -80,7 +75,7 @@ public class PasswordServiceImpl implements PasswordService {
                         () -> new TokenNotValidException("Пользователь не найден")
                 );
 
-        if(!password.getPassword().equals(password.getConfirmPassword())){
+        if (!password.getPassword().equals(password.getConfirmPassword())) {
             return ResponseEntity.badRequest().body("Пароли не совпадают!");
         }
 
@@ -97,13 +92,13 @@ public class PasswordServiceImpl implements PasswordService {
 
     @Override
     public ResponseEntity<String> changePasswordOfUser(ChangePasswordDTO changePasswordDTO, User user) {
-        if(!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())){
+        if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
             return ResponseEntity.badRequest().body("Старый пароль введен некорректно!");
         }
-        if(passwordEncoder.matches(changePasswordDTO.getNewPassword(), user.getPassword())){
+        if (passwordEncoder.matches(changePasswordDTO.getNewPassword(), user.getPassword())) {
             return ResponseEntity.badRequest().body("Новый пароль совпадает со старым!");
         }
-        if(!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmNewPassword())){
+        if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmNewPassword())) {
             return ResponseEntity.badRequest().body("Пароли не совпадают!");
         }
 
@@ -111,6 +106,18 @@ public class PasswordServiceImpl implements PasswordService {
         userRepository.save(user);
 
         return ResponseEntity.ok("Пароль успешно сменен!");
+    }
+
+    private void sendToken(RecoveryToken recoveryToken, User user) {
+        SimpleMailMessage activationEmail = new SimpleMailMessage();
+        activationEmail.setFrom("bilem@gmail.com");
+        activationEmail.setTo(user.getEmail());
+        activationEmail.setSubject("Сброс пароля");
+        activationEmail.setText("Для создания нового пароля введите следующий код: " + recoveryToken.getToken() +
+                "\nИстекает " + recoveryToken.getExpireAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
+
+        emailService.sendEmail(activationEmail);
+        log.info("Код успешно отправлен на почту " + user.getEmail());
     }
 
     private RecoveryToken constructToken(User user) {

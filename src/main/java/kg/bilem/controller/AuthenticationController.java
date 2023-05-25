@@ -1,15 +1,18 @@
 package kg.bilem.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kg.bilem.dto.AuthenticationResponse;
 import kg.bilem.dto.user.AuthUserDTO;
 import kg.bilem.dto.user.CreateUserDTO;
 import kg.bilem.exception.UserAlreadyExistException;
+import kg.bilem.model.User;
 import kg.bilem.service.impls.AuthenticationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -19,7 +22,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
-        name = "Контроллер для авторизации, регистрации, подтверждения аккаунта"
+        name = "Контроллер для авторизации/регистрации",
+        description = "В этом контроллере есть возможности авторизации, регистрации, подтверждения аккаунта, обновления токена и выхода"
 )
 public class AuthenticationController {
     private final AuthenticationServiceImpl service;
@@ -56,5 +60,14 @@ public class AuthenticationController {
     )
     public ResponseEntity<String> activate(@PathVariable String token) {
         return service.activateAccount(token);
+    }
+
+    @SecurityRequirement(name = "JWT")
+    @PostMapping("/logout")
+    @Operation(
+            summary = "Выход из аккаунта"
+    )
+    public ResponseEntity<String> logout(@AuthenticationPrincipal User user) {
+        return service.logout(user);
     }
 }
