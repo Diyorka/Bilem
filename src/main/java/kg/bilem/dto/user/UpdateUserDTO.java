@@ -22,7 +22,7 @@ public class UpdateUserDTO {
 
     String activity_sphere;
 
-    String city;
+    Long cityId;
 
     String work_place;
 

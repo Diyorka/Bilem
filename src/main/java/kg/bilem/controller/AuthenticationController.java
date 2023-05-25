@@ -62,8 +62,8 @@ public class AuthenticationController {
         return service.activateAccount(token);
     }
 
-    @SecurityRequirement(name = "JWT")
     @PostMapping("/logout")
+    @SecurityRequirement(name = "JWT")
     @Operation(
             summary = "Выход из аккаунта"
     )

@@ -52,7 +52,7 @@ public class GetUserDTO {
                 .about_me(user.getAbout_me())
                 .profile_description(user.getProfile_description())
                 .activity_sphere(user.getActivity_sphere())
-                .city(user.getCity())
+                .city(user.getCity().getName())
                 .work_place(user.getWork_place())
                 .instagram(user.getInstagram())
                 .github(user.getGithub())

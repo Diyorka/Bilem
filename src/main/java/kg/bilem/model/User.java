@@ -43,7 +43,8 @@ public class User extends BaseEntity implements UserDetails {
 
     String activity_sphere;
 
-    String city;
+    @ManyToOne
+    City city;
 
     String work_place;
 

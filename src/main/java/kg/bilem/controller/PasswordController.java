@@ -28,7 +28,7 @@ public class PasswordController {
     @Operation(
             summary = "Восстановление пароля по почте"
     )
-    public ResponseEntity<String> forgotPassword(@RequestParam String email){
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
         return passwordService.forgotPassword(email);
     }
 
@@ -37,17 +37,17 @@ public class PasswordController {
             summary = "Сброс пароля и создание нового пароля с помощью кода"
     )
     public ResponseEntity<String> resetPassword(@PathVariable("token") String token,
-                                                @RequestBody @Valid ResetPasswordDTO resetPasswordDTO){
+                                                @RequestBody @Valid ResetPasswordDTO resetPasswordDTO) {
         return passwordService.setNewPassword(token, resetPasswordDTO);
     }
 
-    @SecurityRequirement(name = "JWT")
     @PostMapping("/change")
+    @SecurityRequirement(name = "JWT")
     @Operation(
             summary = "Смена пароля авторизованного пользователя"
     )
     public ResponseEntity<String> changePasswordOfUser(@RequestBody @Valid ChangePasswordDTO changePasswordDTO,
-                                                 @AuthenticationPrincipal User user){
+                                                       @AuthenticationPrincipal User user) {
         return passwordService.changePasswordOfUser(changePasswordDTO, user);
     }
 }
