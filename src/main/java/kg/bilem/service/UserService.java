@@ -10,10 +10,6 @@ import kg.bilem.model.User;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
-    ResponseEntity<String> register(CreateUserDTO request) throws UserAlreadyExistException;
-    AuthenticationResponse authenticate(AuthUserDTO request);
-    AuthenticationResponse refreshToken(String refreshToken);
-    ResponseEntity<String> activateAccount(String token);
     GetUserDTO changeUserInfo(UpdateUserDTO userDto, User user);
     ResponseEntity<String> addAdmin(CreateUserDTO userDto);
 }

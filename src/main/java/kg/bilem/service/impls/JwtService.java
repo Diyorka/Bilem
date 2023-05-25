@@ -6,29 +6,31 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import kg.bilem.exception.TokenNotValidException;
+import kg.bilem.model.RefreshToken;
+import kg.bilem.model.User;
+import kg.bilem.repository.RefreshTokenRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
-
     @Value(value = "${app.jwtSecret}")
     private String jwtSecret;
 
     @Value(value = "${app.jwtExpirationInMs}")
     private long jwtExpirationInMs;
 
-    @Value(value = "${app.refreshExpirationInMs}")
-    private long refreshExpirationInMs;
-
-    // to get Username from Claims
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -45,10 +47,6 @@ public class JwtService {
     public String generateToken(Map<String, Object> extractClaims,
                                 UserDetails userDetails) {
         return buildToken(extractClaims, userDetails, jwtExpirationInMs);
-    }
-
-    public String generateRefreshToken(UserDetails userDetails) {
-        return buildToken(new HashMap<>(), userDetails, refreshExpirationInMs);
     }
 
     private String buildToken(Map<String, Object> extractClaims,

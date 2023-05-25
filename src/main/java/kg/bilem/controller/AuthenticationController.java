@@ -7,7 +7,7 @@ import kg.bilem.dto.AuthenticationResponse;
 import kg.bilem.dto.user.AuthUserDTO;
 import kg.bilem.dto.user.CreateUserDTO;
 import kg.bilem.exception.UserAlreadyExistException;
-import kg.bilem.service.impls.UserServiceImpl;
+import kg.bilem.service.impls.AuthenticationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +22,7 @@ import java.io.IOException;
         name = "Контроллер для авторизации, регистрации, подтверждения аккаунта"
 )
 public class AuthenticationController {
-
-    private final UserServiceImpl service;
+    private final AuthenticationServiceImpl service;
 
     @PostMapping("/register")
     @Operation(
