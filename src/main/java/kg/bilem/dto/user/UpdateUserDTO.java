@@ -2,6 +2,7 @@ package kg.bilem.dto.user;
 
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -22,6 +23,7 @@ public class UpdateUserDTO {
 
     String activity_sphere;
 
+    @NotNull(message = "Айди города не может быть null")
     Long cityId;
 
     String work_place;

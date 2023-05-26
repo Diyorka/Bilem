@@ -5,6 +5,9 @@ import kg.bilem.model.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -12,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GetUserDTO {
+    Long id;
     String name;
 
     String email;
@@ -46,13 +50,14 @@ public class GetUserDTO {
 
     public static GetUserDTO toGetUserDto(User user){
         return GetUserDTO.builder()
+                .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .imageUrl(user.getImage_url())
                 .about_me(user.getAbout_me())
                 .profile_description(user.getProfile_description())
                 .activity_sphere(user.getActivity_sphere())
-                .city(user.getCity().getName())
+                .city(user.getCity() == null ? null : user.getCity().getName())
                 .work_place(user.getWork_place())
                 .instagram(user.getInstagram())
                 .github(user.getGithub())
@@ -63,6 +68,10 @@ public class GetUserDTO {
                 .dribble(user.getDribble())
                 .role(user.getRole().name())
                 .build();
+    }
+
+    public static List<GetUserDTO> toGetUserDto(List<User> users){
+        return users.stream().map(GetUserDTO::toGetUserDto).collect(Collectors.toList());
     }
 
 }
