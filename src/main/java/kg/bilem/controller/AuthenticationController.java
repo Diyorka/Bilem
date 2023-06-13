@@ -38,6 +38,14 @@ public class AuthenticationController {
         return service.register(request);
     }
 
+    @GetMapping("/resend-code")
+    @Operation(
+            summary = "Отправить код активации аккаунта повторно"
+    )
+    public ResponseEntity<String> resendCode(@RequestParam String email){
+        return service.resendCode(email);
+    }
+
     @PostMapping("/login")
     @Operation(
             summary = "Авторизация активированного аккаунта"

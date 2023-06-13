@@ -26,6 +26,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -132,6 +133,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         RefreshToken refreshToken = refreshTokenRepository.findByUser(user);
         refreshTokenRepository.delete(refreshToken);
         return ResponseEntity.ok("Успешный выход");
+    }
+
+    @Override
+    public ResponseEntity<String> resendCode(String email) {
+        if(!userRepository.existsByEmail(email)){
+            throw new NotFoundException("Пользователь с такой почтой не найден");
+        }
+
+        User user = userRepository.findByEmail(email).get();
+        RecoveryToken recoveryToken = recoveryTokenRepository.findByUser(user);
+        if(Duration.between(recoveryToken.getCreatedAt(), LocalDateTime.now()).toMinutes() < 1){
+            return ResponseEntity.badRequest().body("С последнего запроса прошло меньше минуты, попробуйте повторно позже");
+        }
+
+        recoveryTokenRepository.delete(recoveryToken);
+        RecoveryToken newToken = constructToken(user);
+        recoveryTokenRepository.save(newToken);
+        sendToken(newToken, user);
+
+        return ResponseEntity.ok("Код успешно отправлен");
     }
 
     private void sendToken(RecoveryToken recoveryToken, User user) {

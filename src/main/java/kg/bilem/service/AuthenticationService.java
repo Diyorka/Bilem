@@ -16,4 +16,6 @@ public interface AuthenticationService {
 
     ResponseEntity<String> activateAccount(String token);
     ResponseEntity<String> logout(User user);
+
+    ResponseEntity<String> resendCode(String email);
 }
