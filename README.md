@@ -1,7 +1,7 @@
 <<<<<<< HEAD
 # Bilem
 
-
+Diyor and Beka
 
 ## Getting started
 
