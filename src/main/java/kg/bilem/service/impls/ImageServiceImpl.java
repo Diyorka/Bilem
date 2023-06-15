@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import kg.bilem.exception.FileEmptyException;
 import kg.bilem.model.User;
 import kg.bilem.repository.UserRepository;
+import kg.bilem.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,10 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class ImageServiceImpl {
+public class ImageServiceImpl implements ImageService {
     private final UserRepository userRepository;
 
+    @Override
     public String saveImage(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new FileEmptyException("Файл пустой");
@@ -45,6 +47,7 @@ public class ImageServiceImpl {
         return (String) upload.get("url");
     }
 
+    @Override
     public ResponseEntity<String> saveForUser(User user, MultipartFile file) throws IOException {
         user.setImage_url(saveImage(file));
         userRepository.save(user);
