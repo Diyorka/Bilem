@@ -10,6 +10,7 @@ import kg.bilem.dto.user.GetUserDTO;
 import kg.bilem.dto.user.UpdateUserDTO;
 import kg.bilem.model.User;
 import kg.bilem.service.UserService;
+import kg.bilem.service.impls.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
         description = "В этом контроллере есть возможность получения, добавления, изменения и удаления пользователей"
 )
 public class UserController {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     @GetMapping("/all")
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("hasAuthority('ADMIN')")
