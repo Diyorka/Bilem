@@ -9,6 +9,8 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kg.bilem.dto.category.ResponseCategoryDTO.toResponseCategoryDTO;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,13 +22,13 @@ public class ResponseSubcategoryDTO {
 
     String name;
 
-    String category;
+    ResponseCategoryDTO category;
 
     public static ResponseSubcategoryDTO toResponseSubcategoryDTO(Subcategory subcategory){
         return ResponseSubcategoryDTO.builder()
                 .id(subcategory.getId())
                 .name(subcategory.getName())
-                .category(subcategory.getCategory().getName())
+                .category(toResponseCategoryDTO(subcategory.getCategory()))
                 .build();
     }
 
