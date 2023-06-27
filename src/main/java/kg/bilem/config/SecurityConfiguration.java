@@ -27,7 +27,9 @@ public class SecurityConfiguration {
             "/v3/api-docs/**",
             "/api/auth/**",
             "/api/password/**",
-            "/api/city/**"
+            "/api/city/**",
+            "/api/category/**",
+            "/api/subcategory/**"
     };
 
     @Bean
