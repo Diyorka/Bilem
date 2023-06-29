@@ -28,7 +28,7 @@ public class ImageServiceImpl implements ImageService {
             throw new FileEmptyException("Файл пустой");
         }
 
-        final String urlKey = "cloudinary://753949556892917:SCszCjA1duCgeAaMxDP-7Qq3dP8@dja0nqat2";
+        final String urlKey = "cloudinary://298321212671499:SOxyj52dON_dPURTnhaTOCzswKY@bilem";
 
         File saveFile = Files.createTempFile(
                         System.currentTimeMillis() + "",
