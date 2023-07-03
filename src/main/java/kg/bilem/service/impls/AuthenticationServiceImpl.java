@@ -83,7 +83,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = generateRefreshToken(user);
-        if(refreshTokenRepository.existsByUser(user)){
+        if (refreshTokenRepository.existsByUser(user)) {
             refreshToken.setId(refreshTokenRepository.findByUser(user).getId());
         }
         refreshTokenRepository.save(refreshToken);
@@ -137,13 +137,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public ResponseEntity<String> resendCode(String email) {
-        if(!userRepository.existsByEmail(email)){
+        if (!userRepository.existsByEmail(email)) {
             throw new NotFoundException("Пользователь с такой почтой не найден");
         }
 
         User user = userRepository.findByEmail(email).get();
         RecoveryToken recoveryToken = recoveryTokenRepository.findByUser(user);
-        if(Duration.between(recoveryToken.getCreatedAt(), LocalDateTime.now()).toMinutes() < 1){
+        if (Duration.between(recoveryToken.getCreatedAt(), LocalDateTime.now()).toMinutes() < 1) {
             return ResponseEntity.badRequest().body("С последнего запроса прошло меньше минуты, попробуйте повторно позже");
         }
 

@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 )
 public class UserController {
     private final UserServiceImpl userService;
+
     @GetMapping("/all")
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -57,7 +58,7 @@ public class UserController {
             summary = "Изменение данных авторизованного пользователя"
     )
     public GetUserDTO changeUserInfo(@RequestBody @Valid UpdateUserDTO userDto,
-                                     @AuthenticationPrincipal User user){
+                                     @AuthenticationPrincipal User user) {
         return userService.changeUserInfo(userDto, user);
     }
 
@@ -67,7 +68,7 @@ public class UserController {
     @Operation(
             summary = "Добавление нового администратора"
     )
-    public ResponseEntity<String> addAdmin(@RequestBody CreateUserDTO userDto){
+    public ResponseEntity<String> addAdmin(@RequestBody CreateUserDTO userDto) {
         return userService.addAdmin(userDto);
     }
 

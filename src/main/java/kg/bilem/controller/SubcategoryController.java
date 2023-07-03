@@ -44,7 +44,7 @@ public class SubcategoryController {
     @Operation(
             summary = "Получение подкатегории по айди"
     )
-    public ResponseSubcategoryDTO getSubcategoryById(@PathVariable Long id){
+    public ResponseSubcategoryDTO getSubcategoryById(@PathVariable Long id) {
         return subcategoryService.getSubcategoryById(id);
     }
 
@@ -54,7 +54,7 @@ public class SubcategoryController {
     @Operation(
             summary = "Добавление новой подкатегории"
     )
-    public ResponseEntity<String> addSubcategory(@RequestBody RequestSubcategoryDTO subcategoryDTO){
+    public ResponseEntity<String> addSubcategory(@RequestBody RequestSubcategoryDTO subcategoryDTO) {
         return subcategoryService.addSubcategory(subcategoryDTO);
     }
 }

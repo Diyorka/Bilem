@@ -37,7 +37,7 @@ public class CategoryController {
     @Operation(
             summary = "Получение категории по айди"
     )
-    public ResponseCategoryDTO getCategoryById(@PathVariable Long id){
+    public ResponseCategoryDTO getCategoryById(@PathVariable Long id) {
         return categoryService.getCategoryById(id);
     }
 
@@ -47,7 +47,7 @@ public class CategoryController {
     @Operation(
             summary = "Добавление новой категории"
     )
-    public ResponseEntity<String> addCategory(@RequestBody RequestCategoryDTO categoryDTO){
+    public ResponseEntity<String> addCategory(@RequestBody RequestCategoryDTO categoryDTO) {
         return categoryService.addCategory(categoryDTO);
     }
 }

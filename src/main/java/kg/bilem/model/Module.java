@@ -1,6 +1,7 @@
 package kg.bilem.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -16,5 +17,6 @@ import lombok.experimental.FieldDefaults;
 public class Module extends BaseEntity{
     String name;
 
+    @ManyToOne
     Course course;
 }

@@ -42,7 +42,7 @@ public class AuthenticationController {
     @Operation(
             summary = "Отправить код активации аккаунта повторно"
     )
-    public ResponseEntity<String> resendCode(@RequestParam String email){
+    public ResponseEntity<String> resendCode(@RequestParam String email) {
         return service.resendCode(email);
     }
 

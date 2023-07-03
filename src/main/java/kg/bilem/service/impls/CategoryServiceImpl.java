@@ -36,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ResponseEntity<String> addCategory(RequestCategoryDTO categoryDTO) {
-        if(categoryRepository.existsByName(categoryDTO.getName())){
+        if (categoryRepository.existsByName(categoryDTO.getName())) {
             throw new AlreadyExistException("Категория с названием " + categoryDTO.getName() + " существует");
         }
         categoryRepository.save(new Category(categoryDTO.getName()));
