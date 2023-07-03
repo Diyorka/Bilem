@@ -33,7 +33,7 @@ public class User extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     Role role;
 
-    String image_url;
+    String imageUrl;
 
     @Column(length = 500)
     String about_me;
@@ -41,12 +41,12 @@ public class User extends BaseEntity implements UserDetails {
     @Column(length = 500)
     String profile_description;
 
-    String activity_sphere;
+    String activitySphere;
 
     @ManyToOne
     City city;
 
-    String work_place;
+    String workPlace;
 
     String instagram;
 
@@ -61,6 +61,22 @@ public class User extends BaseEntity implements UserDetails {
     String telegram;
 
     String dribble;
+
+    @ManyToMany
+    @JoinTable(
+            name = "teacher_course",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    List<Course> teachingCourses;
+
+    @ManyToMany
+    @JoinTable(
+            name = "student_course",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    List<Course> studyingCourses;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
