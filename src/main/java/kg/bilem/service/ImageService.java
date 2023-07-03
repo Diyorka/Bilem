@@ -9,4 +9,6 @@ import java.io.IOException;
 public interface ImageService {
     String saveImage(MultipartFile file) throws IOException;
     ResponseEntity<String> saveForUser(User user, MultipartFile file) throws IOException;
+
+    ResponseEntity<String> saveForCourse(Long courseId, MultipartFile file, User user) throws IOException;
 }

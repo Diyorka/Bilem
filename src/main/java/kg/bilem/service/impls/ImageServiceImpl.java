@@ -3,7 +3,10 @@ package kg.bilem.service.impls;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import kg.bilem.exception.FileEmptyException;
+import kg.bilem.exception.NotFoundException;
+import kg.bilem.model.Course;
 import kg.bilem.model.User;
+import kg.bilem.repository.CourseRepository;
 import kg.bilem.repository.UserRepository;
 import kg.bilem.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
     private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
 
     @Override
     public String saveImage(MultipartFile file) throws IOException {
@@ -49,8 +53,19 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public ResponseEntity<String> saveForUser(User user, MultipartFile file) throws IOException {
-        user.setImage_url(saveImage(file));
+        user.setImageUrl(saveImage(file));
         userRepository.save(user);
         return ResponseEntity.ok("Фотография сохранена");
+    }
+
+    @Override
+    public ResponseEntity<String> saveForCourse(Long courseId, MultipartFile file, User user) throws IOException {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new NotFoundException("Курс с айди " + courseId + " не найден"));
+
+        course.setImageUrl(saveImage(file));
+        courseRepository.save(course);
+
+        return ResponseEntity.ok("Фотография курса успешно добавлена");
     }
 }
