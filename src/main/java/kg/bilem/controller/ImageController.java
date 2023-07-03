@@ -24,6 +24,7 @@ import java.io.IOException;
 )
 public class ImageController {
     private final ImageServiceImpl imageService;
+
     @PostMapping(value = "/upload/myAvatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @SecurityRequirement(name = "JWT")
     @Operation(

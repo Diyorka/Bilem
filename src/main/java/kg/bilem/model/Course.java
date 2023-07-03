@@ -1,9 +1,6 @@
 package kg.bilem.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import kg.bilem.enums.Language;
 import kg.bilem.enums.Status;
 import kg.bilem.enums.CourseType;
@@ -32,15 +29,19 @@ public class Course extends BaseEntity{
     @ManyToOne
     Subcategory subcategory;
 
+    @Enumerated(EnumType.STRING)
     CourseType courseType;
 
     int price;
 
+    @Enumerated(EnumType.STRING)
     Status status;
 
+    @Enumerated(EnumType.STRING)
     Language language;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     User owner;
 
     @ManyToMany(mappedBy = "teachingCourses")
