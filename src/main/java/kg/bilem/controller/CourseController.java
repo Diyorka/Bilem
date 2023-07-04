@@ -21,25 +21,4 @@ import org.springframework.web.bind.annotation.*;
         description = "В этом контроллере есть возможность получения, добавления и изменения курсов"
 )
 public class CourseController {
-
-    final CourseServiceImpl courseService;
-
-    @PostMapping("/add")
-    @SecurityRequirement(name = "JWT")
-    @Operation(
-            summary = "Добавление нового курса"
-    )
-    public ResponseEntity<String> addCourse(@AuthenticationPrincipal User user, @RequestBody CreateCourseDTO courseDTO) {
-        return courseService.createCourse(courseDTO, user);
-    }
-
-    @GetMapping("/get/{titleOfCourse}")
-    @SecurityRequirement(name = "JWT")
-    @Operation(
-            summary = "Получение курса по названию"
-    )
-    public GetCourseDTO getCourseByTitle(@PathVariable String titleOfCourse) {
-        return courseService.getCourseByTitle(titleOfCourse);
-    }
-
 }

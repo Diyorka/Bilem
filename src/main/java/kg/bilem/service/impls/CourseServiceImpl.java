@@ -43,29 +43,15 @@ public class CourseServiceImpl implements CourseService {
 
         courseRepository.save(
                 Course.builder()
-                        .price(courseDTO.getPrice())
                         .title(courseDTO.getTitle())
-                        .courseType(courseDTO.getPrice() == 0 ? CourseType.FREE : CourseType.PAID)
-                        .description(courseDTO.getDescription())
-                        .imageUrl(courseDTO.getImageUrl())
-                        .language(courseDTO.getLanguage())
-                        .videoUrl(courseDTO.getVideoUrl())
                         .status(Status.NOT_ACTIVATED)
                         .owner(user)
                         .build()
         );
 
         return ResponseEntity.ok("Курс успешно создан");
-    }
 
-    @Override
-    public GetCourseDTO getCourseByTitle(String titleOfCourse) {
-        if (!courseRepository.existsByTitle(titleOfCourse)) {
-            throw new NotFoundException("Курс с таким названием не существует");
-        }
-        return GetCourseDTO.toGetCourseDTO(courseRepository.findByTitle(titleOfCourse));
     }
-
 
     @Override
     public ResponseEntity<String> editCourse(Long courseId, EditCourseDTO courseDTO, User user) {
