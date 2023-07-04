@@ -65,6 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         RecoveryToken recoveryToken = constructToken(user);
         recoveryTokenRepository.save(recoveryToken);
+        log.info("your code: {}", recoveryToken.getToken());
 
         sendToken(recoveryToken, user);
 

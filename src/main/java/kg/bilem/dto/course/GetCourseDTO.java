@@ -1,16 +1,9 @@
 package kg.bilem.dto.course;
 
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import kg.bilem.dto.subcategory.RequestSubcategoryDTO;
 import kg.bilem.dto.subcategory.ResponseSubcategoryDTO;
 import kg.bilem.dto.user.GetUserDTO;
 import kg.bilem.enums.CourseType;
-import kg.bilem.enums.Language;
-import kg.bilem.enums.Status;
 import kg.bilem.model.Course;
-import kg.bilem.model.Subcategory;
-import kg.bilem.model.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -29,7 +22,7 @@ import static kg.bilem.dto.user.GetUserDTO.toGetUserDto;
 public class GetCourseDTO {
     Long id;
 
-    String name;
+    String title;
 
     String imageUrl;
 
@@ -58,7 +51,7 @@ public class GetCourseDTO {
     public static GetCourseDTO toGetCourseDTO(Course course) {
         return GetCourseDTO.builder()
                 .id(course.getId())
-                .name(course.getName())
+                .title(course.getTitle())
                 .imageUrl(course.getImageUrl())
                 .videoUrl(course.getVideoUrl())
                 .description(course.getDescription())

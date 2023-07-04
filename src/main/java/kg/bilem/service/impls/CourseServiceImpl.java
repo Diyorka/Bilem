@@ -32,7 +32,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public ResponseEntity<String> createCourse(CreateCourseDTO courseDTO, User user) {
-        if (courseRepository.existsByName(courseDTO.getName())) {
+        if (courseRepository.existsByTitle(courseDTO.getTitle())) {
             throw new AlreadyExistException("Курс с таким названием уже существует");
         }
 
@@ -43,7 +43,13 @@ public class CourseServiceImpl implements CourseService {
 
         courseRepository.save(
                 Course.builder()
-                        .name(courseDTO.getName())
+                        .price(courseDTO.getPrice())
+                        .title(courseDTO.getTitle())
+                        .courseType(courseDTO.getPrice() == 0 ? CourseType.FREE : CourseType.PAID)
+                        .description(courseDTO.getDescription())
+                        .imageUrl(courseDTO.getImageUrl())
+                        .language(courseDTO.getLanguage())
+                        .videoUrl(courseDTO.getVideoUrl())
                         .status(Status.NOT_ACTIVATED)
                         .owner(user)
                         .build()
@@ -51,6 +57,15 @@ public class CourseServiceImpl implements CourseService {
 
         return ResponseEntity.ok("Курс успешно создан");
     }
+
+    @Override
+    public GetCourseDTO getCourseByTitle(String titleOfCourse) {
+        if (!courseRepository.existsByTitle(titleOfCourse)) {
+            throw new NotFoundException("Курс с таким названием не существует");
+        }
+        return GetCourseDTO.toGetCourseDTO(courseRepository.findByTitle(titleOfCourse));
+    }
+
 
     @Override
     public ResponseEntity<String> editCourse(Long courseId, EditCourseDTO courseDTO, User user) {

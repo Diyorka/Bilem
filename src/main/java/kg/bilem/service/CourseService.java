@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface CourseService {
     ResponseEntity<String> createCourse(CreateCourseDTO courseDTO, User user);
+    GetCourseDTO getCourseByTitle(String titleOfCourse);
     ResponseEntity<String> editCourse(Long courseId, EditCourseDTO courseDTO, User user);
 
 }

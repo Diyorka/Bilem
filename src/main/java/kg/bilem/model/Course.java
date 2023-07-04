@@ -17,8 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Course extends BaseEntity {
-    String name;
+public class Course extends BaseEntity{
+    String title;
 
     String imageUrl;
 
@@ -29,6 +29,7 @@ public class Course extends BaseEntity {
     String whatStudentGet;
 
     @ManyToOne
+    @JoinColumn(name = "subcategory_id")
     Subcategory subcategory;
 
     @Enumerated(EnumType.STRING)

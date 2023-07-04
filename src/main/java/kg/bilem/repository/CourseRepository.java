@@ -9,4 +9,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     boolean existsByName(String name);
 
     Page<Course> findAllBySubcategoryId(Long id, Pageable pageable);
+    boolean existsByTitle(String title);
+    Course findByTitle(String titleOfCourse);
 }
