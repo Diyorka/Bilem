@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db-bilem-do-user-14309045-0.b.db.ondigitalocean.com:25060/bilemDB
-    username: doadmin
-    password: AVNS_q1bzRfY_q3Kg6TbFdQ9
+    url: jdbc:postgresql://localhost:5432/bilemDB
+    username: postgres
+    password: 1234
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
