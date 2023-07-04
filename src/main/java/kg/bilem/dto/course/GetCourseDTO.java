@@ -48,7 +48,7 @@ public class GetCourseDTO {
 
     int studentsCount;
 
-    public static GetCourseDTO toGetCourseDTO(Course course){
+    public static GetCourseDTO toGetCourseDTO(Course course) {
         return GetCourseDTO.builder()
                 .id(course.getId())
                 .title(course.getTitle())
@@ -67,7 +67,7 @@ public class GetCourseDTO {
                 .build();
     }
 
-    public static List<GetCourseDTO> toGetCourseDTO(List<Course> courses){
+    public static List<GetCourseDTO> toGetCourseDTO(List<Course> courses) {
         return courses.stream().map(GetCourseDTO::toGetCourseDTO).collect(Collectors.toList());
     }
 }

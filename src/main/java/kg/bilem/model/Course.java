@@ -26,6 +26,8 @@ public class Course extends BaseEntity{
 
     String description;
 
+    String whatStudentGet;
+
     @ManyToOne
     @JoinColumn(name = "subcategory_id")
     Subcategory subcategory;
