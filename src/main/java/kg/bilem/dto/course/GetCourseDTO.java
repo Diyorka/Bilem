@@ -1,16 +1,9 @@
 package kg.bilem.dto.course;
 
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import kg.bilem.dto.subcategory.RequestSubcategoryDTO;
 import kg.bilem.dto.subcategory.ResponseSubcategoryDTO;
 import kg.bilem.dto.user.GetUserDTO;
 import kg.bilem.enums.CourseType;
-import kg.bilem.enums.Language;
-import kg.bilem.enums.Status;
 import kg.bilem.model.Course;
-import kg.bilem.model.Subcategory;
-import kg.bilem.model.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

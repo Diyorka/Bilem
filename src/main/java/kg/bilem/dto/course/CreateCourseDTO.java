@@ -1,6 +1,8 @@
 package kg.bilem.dto.course;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import kg.bilem.enums.CourseType;
+import kg.bilem.enums.Language;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,6 +13,13 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateCourseDTO {
-    @NotBlank(message = "Название курса не может быть пустым")
-    String name;
+    @NotNull(message = "Название курса не может быть пустым")
+    String title;
+
+    int price;
+    CourseType courseType;
+    String description;
+    String imageUrl;
+    Language language;
+    String videoUrl;
 }

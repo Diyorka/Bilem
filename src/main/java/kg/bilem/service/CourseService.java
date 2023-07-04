@@ -9,6 +9,5 @@ import org.springframework.http.ResponseEntity;
 public interface CourseService {
     Page<GetCourseDTO> getCoursesBySubcategoryId(Long id);
     ResponseEntity<String> createCourse(CreateCourseDTO courseDTO, User user);
-
-
+    GetCourseDTO getCourseByTitle(String titleOfCourse);
 }
