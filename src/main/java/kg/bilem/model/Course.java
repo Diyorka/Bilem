@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Course extends BaseEntity{
+public class Course extends BaseEntity {
     String name;
 
     String imageUrl;
@@ -25,6 +25,8 @@ public class Course extends BaseEntity{
     String videoUrl;
 
     String description;
+
+    String whatStudentGet;
 
     @ManyToOne
     Subcategory subcategory;
