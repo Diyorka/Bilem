@@ -22,7 +22,7 @@ import static kg.bilem.dto.user.GetUserDTO.toGetUserDto;
 public class GetCourseDTO {
     Long id;
 
-    String name;
+    String title;
 
     String imageUrl;
 
@@ -51,7 +51,7 @@ public class GetCourseDTO {
     public static GetCourseDTO toGetCourseDTO(Course course){
         return GetCourseDTO.builder()
                 .id(course.getId())
-                .name(course.getName())
+                .title(course.getTitle())
                 .imageUrl(course.getImageUrl())
                 .videoUrl(course.getVideoUrl())
                 .description(course.getDescription())
