@@ -2,15 +2,14 @@ package kg.bilem.service.impls;
 
 import kg.bilem.dto.course.CreateCourseDTO;
 import kg.bilem.dto.course.GetCourseDTO;
+import kg.bilem.enums.CourseType;
 import kg.bilem.enums.Role;
 import kg.bilem.enums.Status;
 import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.Course;
-import kg.bilem.model.Subcategory;
 import kg.bilem.model.User;
 import kg.bilem.repository.CourseRepository;
-import kg.bilem.repository.SubcategoryRepository;
 import kg.bilem.repository.UserRepository;
 import kg.bilem.service.CourseService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ import java.util.List;
 public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
-    private final SubcategoryRepository subcategoryRepository;
 
     @Override
     public Page<GetCourseDTO> getCoursesBySubcategoryId(Long id) {
@@ -34,7 +32,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public ResponseEntity<String> createCourse(CreateCourseDTO courseDTO, User user) {
-        if (courseRepository.existsByName(courseDTO.getTitle())) {
+        if (courseRepository.existsByTitle(courseDTO.getTitle())) {
             throw new AlreadyExistException("Курс с таким названием уже существует");
         }
 
@@ -47,7 +45,7 @@ public class CourseServiceImpl implements CourseService {
                 Course.builder()
                         .price(courseDTO.getPrice())
                         .title(courseDTO.getTitle())
-                        .courseType(courseDTO.getCourseType())
+                        .courseType(courseDTO.getPrice() == 0 ? CourseType.FREE : CourseType.PAID)
                         .description(courseDTO.getDescription())
                         .imageUrl(courseDTO.getImageUrl())
                         .language(courseDTO.getLanguage())
@@ -62,10 +60,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public GetCourseDTO getCourseByTitle(String titleOfCourse) {
-        if (!courseRepository.existsByName(titleOfCourse)) {
+        if (!courseRepository.existsByTitle(titleOfCourse)) {
             throw new NotFoundException("Курс с таким названием не существует");
         }
-        return GetCourseDTO.toGetCourseDTO(courseRepository.findByName(titleOfCourse));
+        return GetCourseDTO.toGetCourseDTO(courseRepository.findByTitle(titleOfCourse));
     }
 
 }

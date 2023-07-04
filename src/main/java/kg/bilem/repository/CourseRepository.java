@@ -4,6 +4,6 @@ import kg.bilem.model.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    boolean existsByName(String name);
-    Course findByName(String titleOfCourse);
+    boolean existsByTitle(String title);
+    Course findByTitle(String titleOfCourse);
 }
