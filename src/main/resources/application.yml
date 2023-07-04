@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bilemDB
+    url: jdbc:postgresql://146.190.116.68:5432/bilemDB
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver
