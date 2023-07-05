@@ -47,7 +47,12 @@ public class Course extends BaseEntity{
     @JoinColumn(name = "user_id")
     User owner;
 
-    @ManyToMany(mappedBy = "teachingCourses")
+    @ManyToMany()
+    @JoinTable(
+            name = "teacher_course",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     List<User> teachers;
 
     @ManyToMany(mappedBy = "studyingCourses")

@@ -62,12 +62,7 @@ public class User extends BaseEntity implements UserDetails {
 
     String dribble;
 
-    @ManyToMany
-    @JoinTable(
-            name = "teacher_course",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
+    @ManyToMany(mappedBy = "teachers")
     List<Course> teachingCourses;
 
     @ManyToMany
