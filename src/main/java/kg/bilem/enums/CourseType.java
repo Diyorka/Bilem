@@ -1,5 +1,6 @@
 package kg.bilem.enums;
 
+import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.Course;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,6 @@ public enum CourseType {
         return Stream.of(CourseType.values())
                 .filter(cType -> cType.getCourseType().equals(courseType))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NotFoundException("Тип курса не найден"));
     }
 }
