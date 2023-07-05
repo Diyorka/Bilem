@@ -15,11 +15,4 @@ import lombok.experimental.FieldDefaults;
 public class CreateCourseDTO {
     @NotNull(message = "Название курса не может быть пустым")
     String title;
-
-    int price;
-    CourseType courseType;
-    String description;
-    String imageUrl;
-    Language language;
-    String videoUrl;
 }
