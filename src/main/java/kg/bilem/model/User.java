@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -63,15 +64,15 @@ public class User extends BaseEntity implements UserDetails {
     String dribble;
 
     @ManyToMany(mappedBy = "teachers")
-    List<Course> teachingCourses;
+    Set<Course> teachingCourses;
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(
             name = "student_course",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
-    List<Course> studyingCourses;
+    Set<Course> studyingCourses;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

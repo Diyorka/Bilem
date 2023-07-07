@@ -40,14 +40,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<GetUserDTO> getAllUsers(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
-        List<GetUserDTO> userDTOS = toGetUserDto(users.toList());
+        List<GetUserDTO> userDTOS = toGetUserDto(users.toSet());
         return new PageImpl<>(userDTOS, pageable, users.getTotalElements());
     }
 
     @Override
     public Page<GetUserDTO> getAllActiveUsers(Pageable pageable) {
         Page<User> users = userRepository.findAllByStatus(Status.ACTIVE, pageable);
-        List<GetUserDTO> userDTOS = toGetUserDto(users.toList());
+        List<GetUserDTO> userDTOS = toGetUserDto(users.toSet());
         return new PageImpl<>(userDTOS, pageable, users.getTotalElements());
     }
 

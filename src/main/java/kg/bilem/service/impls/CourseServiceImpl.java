@@ -1,7 +1,7 @@
 package kg.bilem.service.impls;
 
 import kg.bilem.dto.course.RequestCourseDTO;
-import kg.bilem.dto.course.GetCourseDTO;
+import kg.bilem.dto.course.ResponseCourseDTO;
 import kg.bilem.enums.CourseType;
 import kg.bilem.enums.Language;
 import kg.bilem.enums.Role;
@@ -19,9 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import static kg.bilem.dto.course.GetCourseDTO.toGetCourseDTO;
+import static kg.bilem.dto.course.ResponseCourseDTO.toResponseCourseDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +33,7 @@ public class CourseServiceImpl implements CourseService {
     private final SubcategoryRepository subcategoryRepository;
 
     @Override
-    public GetCourseDTO createCourse(RequestCourseDTO courseDTO, User user) {
+    public ResponseCourseDTO createCourse(RequestCourseDTO courseDTO, User user) {
         if (courseRepository.existsByTitle(courseDTO.getTitle())) {
             throw new AlreadyExistException("Курс с таким названием уже существует");
         }
@@ -44,7 +46,7 @@ public class CourseServiceImpl implements CourseService {
         Course course = buildCourse(courseDTO, user);
         course.setStatus(Status.CHECKING);
 
-        return toGetCourseDTO(courseRepository.save(course));
+        return toResponseCourseDTO(courseRepository.save(course));
     }
 
     @Override
@@ -52,20 +54,20 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с айди " + courseId + " не найден"));
 
-        if(user.getRole() != Role.ADMIN || !user.equals(course.getOwner())){
+        if(user.getRole() != Role.ADMIN || !user.getEmail().equals(course.getOwner().getEmail())){
             return ResponseEntity.badRequest().body("Вы не имеете права на редактирование данного курса");
         }
 
         course = buildCourse(courseDTO, user);
         course.setId(courseId);
-        course.setStatus(Status.CHECKING);
+        course.setStatus(Status.NOT_ACTIVATED);
         courseRepository.save(course);
 
         return ResponseEntity.ok("Курс отправлен на модерацию");
     }
 
     private Course buildCourse(RequestCourseDTO courseDTO, User user) {
-        List<User> teachers = new ArrayList<>();
+        Set<User> teachers = new HashSet<>();
         if(courseDTO.getTeacherIds() != null) {
             for (Long id : courseDTO.getTeacherIds()) {
                 User teacher = userRepository.findById(id)
@@ -86,7 +88,7 @@ public class CourseServiceImpl implements CourseService {
                 .subcategory(subcategoryRepository.findById(courseDTO.getSubcategoryId())
                         .orElseThrow(() -> new NotFoundException("Подкатегория с таким айди не найдена")))
                 .teachers(teachers)
-                .students(new ArrayList<>())
+                .students(new HashSet<>())
                 .owner(user)
                 .language(Language.of(courseDTO.getLanguage()))
                 .build();
