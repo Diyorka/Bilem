@@ -121,4 +121,18 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
         return ResponseEntityBuilder.build(error);
     }
 
+    @ExceptionHandler(NoAccessException.class)
+    public ResponseEntity<Object> handleNoAccess(NoAccessException e){
+        List<String> details = new ArrayList<>();
+        details.add(e.getMessage());
+
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST,
+                "No access",
+                details
+        );
+
+        return ResponseEntityBuilder.build(error);
+    }
 }

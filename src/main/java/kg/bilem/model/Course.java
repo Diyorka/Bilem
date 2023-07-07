@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "course")
@@ -47,9 +48,15 @@ public class Course extends BaseEntity{
     @JoinColumn(name = "user_id")
     User owner;
 
-    @ManyToMany(mappedBy = "teachingCourses")
-    List<User> teachers;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "teacher_course",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    Set<User> teachers;
 
-    @ManyToMany(mappedBy = "studyingCourses")
-    List<User> students;
+    @ManyToMany(mappedBy = "studyingCourses", fetch = FetchType.EAGER)
+    Set<User> students;
+
 }

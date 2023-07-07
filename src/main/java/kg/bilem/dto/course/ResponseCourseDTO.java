@@ -1,5 +1,6 @@
 package kg.bilem.dto.course;
 
+import kg.bilem.dto.module.ResponseModuleDTO;
 import kg.bilem.dto.subcategory.ResponseSubcategoryDTO;
 import kg.bilem.dto.user.GetUserDTO;
 import kg.bilem.enums.CourseType;
@@ -10,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kg.bilem.dto.module.ResponseModuleDTO.toResponseModuleDTO;
 import static kg.bilem.dto.subcategory.ResponseSubcategoryDTO.toResponseSubcategoryDTO;
 import static kg.bilem.dto.user.GetUserDTO.toGetUserDto;
 
@@ -19,7 +21,7 @@ import static kg.bilem.dto.user.GetUserDTO.toGetUserDto;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class GetCourseDTO {
+public class ResponseCourseDTO {
     Long id;
 
     String title;
@@ -48,8 +50,9 @@ public class GetCourseDTO {
 
     int studentsCount;
 
-    public static GetCourseDTO toGetCourseDTO(Course course) {
-        return GetCourseDTO.builder()
+
+    public static ResponseCourseDTO toResponseCourseDTO(Course course) {
+        return ResponseCourseDTO.builder()
                 .id(course.getId())
                 .title(course.getTitle())
                 .imageUrl(course.getImageUrl())
@@ -67,7 +70,7 @@ public class GetCourseDTO {
                 .build();
     }
 
-    public static List<GetCourseDTO> toGetCourseDTO(List<Course> courses) {
-        return courses.stream().map(GetCourseDTO::toGetCourseDTO).collect(Collectors.toList());
+    public static List<ResponseCourseDTO> toResponseCourseDTO(List<Course> courses) {
+        return courses.stream().map(ResponseCourseDTO::toResponseCourseDTO).collect(Collectors.toList());
     }
 }

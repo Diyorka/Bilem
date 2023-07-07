@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -70,7 +71,7 @@ public class GetUserDTO {
                 .build();
     }
 
-    public static List<GetUserDTO> toGetUserDto(List<User> users){
+    public static List<GetUserDTO> toGetUserDto(Set<User> users){
         return users.stream().map(GetUserDTO::toGetUserDto).collect(Collectors.toList());
     }
 
