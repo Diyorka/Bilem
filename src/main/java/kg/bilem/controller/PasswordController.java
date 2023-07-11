@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class PasswordController {
     private final PasswordServiceImpl passwordService;
 
-    @GetMapping("/forgot")
+    @PostMapping("/forgot")
     @Operation(
             summary = "Восстановление пароля по почте"
     )

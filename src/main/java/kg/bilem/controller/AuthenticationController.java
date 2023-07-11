@@ -38,7 +38,7 @@ public class AuthenticationController {
         return service.register(request);
     }
 
-    @GetMapping("/resend-code")
+    @PostMapping("/resend-code")
     @Operation(
             summary = "Отправить код активации аккаунта повторно"
     )
@@ -62,7 +62,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.refreshToken(refreshToken));
     }
 
-    @GetMapping("/activate/{token}")
+    @PostMapping("/activate/{token}")
     @Operation(
             summary = "Активация аккаунта с помощью кода, отправленного на почту"
     )
