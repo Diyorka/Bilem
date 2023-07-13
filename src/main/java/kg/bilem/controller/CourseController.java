@@ -5,9 +5,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.bilem.dto.course.RequestCourseDTO;
 import kg.bilem.dto.course.ResponseCourseDTO;
+import kg.bilem.dto.course.ResponseMainCourseDTO;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.CourseServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +46,14 @@ public class CourseController {
                                              @RequestBody RequestCourseDTO courseDTO,
                                              @AuthenticationPrincipal User user){
         return courseService.editCourse(id, courseDTO, user);
+    }
+
+    @GetMapping("/all")
+    @Operation(
+            summary = "Получение всех курсов с основной информацией"
+    )
+    public Page<ResponseMainCourseDTO> getAllCourses(@PageableDefault Pageable pageable){
+        return courseService.getAllCourses(pageable);
     }
 
 }

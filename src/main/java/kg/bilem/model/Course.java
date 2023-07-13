@@ -59,4 +59,9 @@ public class Course extends BaseEntity{
     @ManyToMany(mappedBy = "studyingCourses", fetch = FetchType.EAGER)
     Set<User> students;
 
+    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
+    Set<Review> reviews;
+
+    Double averageScore;
+
 }

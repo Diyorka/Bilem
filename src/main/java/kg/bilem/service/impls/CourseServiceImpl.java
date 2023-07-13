@@ -2,6 +2,7 @@ package kg.bilem.service.impls;
 
 import kg.bilem.dto.course.RequestCourseDTO;
 import kg.bilem.dto.course.ResponseCourseDTO;
+import kg.bilem.dto.course.ResponseMainCourseDTO;
 import kg.bilem.enums.CourseType;
 import kg.bilem.enums.Language;
 import kg.bilem.enums.Role;
@@ -15,15 +16,18 @@ import kg.bilem.repository.SubcategoryRepository;
 import kg.bilem.repository.UserRepository;
 import kg.bilem.service.CourseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static kg.bilem.dto.course.ResponseCourseDTO.toResponseCourseDTO;
+import static kg.bilem.dto.course.ResponseMainCourseDTO.toResponseMainCourseDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +35,7 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final SubcategoryRepository subcategoryRepository;
+
 
     @Override
     public ResponseCourseDTO createCourse(RequestCourseDTO courseDTO, User user) {
@@ -64,6 +69,21 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.save(course);
 
         return ResponseEntity.ok("Курс отправлен на модерацию");
+    }
+
+    @Override
+    public ResponseCourseDTO getCourseById(Long courseId) {
+        return toResponseCourseDTO(courseRepository.findById(courseId)
+                .filter(course -> course.getStatus() == Status.ACTIVE)
+                .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"))
+        );
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getAllCourses(Pageable pageable) {
+        Page<Course> courses = courseRepository.findAllByStatus(Status.ACTIVE, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
     }
 
     private Course buildCourse(RequestCourseDTO courseDTO, User user) {
