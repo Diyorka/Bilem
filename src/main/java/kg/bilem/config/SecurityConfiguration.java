@@ -30,7 +30,11 @@ public class SecurityConfiguration {
             "/api/city/**",
             "/api/category/**",
             "/api/subcategory/**",
-            "/api/course/**"
+            "/api/course/**",
+            "/api/module/**",
+            "/api/lesson/**",
+            "/api/review/**",
+            "/api/review-reply/**"
     };
 
     @Bean
