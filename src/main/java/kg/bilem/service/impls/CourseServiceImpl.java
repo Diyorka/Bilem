@@ -11,6 +11,7 @@ import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.Course;
 import kg.bilem.model.User;
+import kg.bilem.repository.CategoryRepository;
 import kg.bilem.repository.CourseRepository;
 import kg.bilem.repository.SubcategoryRepository;
 import kg.bilem.repository.UserRepository;
@@ -35,6 +36,7 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final SubcategoryRepository subcategoryRepository;
+    private final CategoryRepository categoryRepository;
 
 
     @Override
@@ -51,6 +53,10 @@ public class CourseServiceImpl implements CourseService {
         Course course = buildCourse(courseDTO, user);
         course.setStatus(Status.CHECKING);
 
+//        int coursesCount = course.getSubcategory().getCategory().getCoursesCount();
+//        course.getSubcategory().getCategory().setCoursesCount(coursesCount+1);
+//        categoryRepository.save(course.getSubcategory().getCategory());
+
         return toResponseCourseDTO(courseRepository.save(course));
     }
 
@@ -65,7 +71,7 @@ public class CourseServiceImpl implements CourseService {
 
         course = buildCourse(courseDTO, user);
         course.setId(courseId);
-        course.setStatus(Status.NOT_ACTIVATED);
+        course.setStatus(Status.CHECKING);
         courseRepository.save(course);
 
         return ResponseEntity.ok("Курс отправлен на модерацию");
@@ -85,6 +91,32 @@ public class CourseServiceImpl implements CourseService {
         List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
         return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
     }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getNewestAndFreeCourses(Pageable pageable) {
+        Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeOrderByCreatedAtDesc(Status.ACTIVE, CourseType.FREE, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getPopularAndFreeCourses(Pageable pageable) {
+        Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeOrderByNumberOfStudentsDesc(Status.ACTIVE, CourseType.FREE, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQuery(String query, Pageable pageable) {
+        if(query == null){
+            getAllCourses(pageable);
+        }
+
+        Page<Course> courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCase(Status.ACTIVE, query, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
 
     private Course buildCourse(RequestCourseDTO courseDTO, User user) {
         Set<User> teachers = new HashSet<>();
@@ -109,7 +141,9 @@ public class CourseServiceImpl implements CourseService {
                         .orElseThrow(() -> new NotFoundException("Подкатегория с таким айди не найдена")))
                 .teachers(teachers)
                 .students(new HashSet<>())
+                .reviews(new HashSet<>())
                 .owner(user)
+                .averageScore((double) 0)
                 .language(Language.of(courseDTO.getLanguage()))
                 .build();
 

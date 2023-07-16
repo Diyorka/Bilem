@@ -56,4 +56,28 @@ public class CourseController {
         return courseService.getAllCourses(pageable);
     }
 
+    @GetMapping("/newest-and-free-courses")
+    @Operation(
+            summary = "Получение всех новейших бесплатных курсов"
+    )
+    public Page<ResponseMainCourseDTO> getNewestAndFreeCourses(@PageableDefault Pageable pageable){
+        return courseService.getNewestAndFreeCourses(pageable);
+    }
+
+    @GetMapping("/popular-and-free-courses")
+    @Operation(
+            summary = "Получение всех популярных бесплатных курсов"
+    )
+    public Page<ResponseMainCourseDTO> getPopularAndFreeCourses(@PageableDefault Pageable pageable){
+        return courseService.getPopularAndFreeCourses(pageable);
+    }
+
+    @GetMapping("/search/{query}")
+    @Operation(
+            summary = "Поиск курса по названию"
+    )
+    public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQuery(@PathVariable String query,
+                                                                      @PageableDefault Pageable pageable){
+        return courseService.getAllCoursesWithSearchByQuery(query, pageable);
+    }
 }

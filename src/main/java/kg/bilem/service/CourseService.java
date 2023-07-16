@@ -16,4 +16,10 @@ public interface CourseService {
 
     Page<ResponseMainCourseDTO> getAllCourses(Pageable pageable);
 
+    Page<ResponseMainCourseDTO> getNewestAndFreeCourses(Pageable pageable);
+
+    Page<ResponseMainCourseDTO> getPopularAndFreeCourses(Pageable pageable);
+
+    Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQuery(String query, Pageable pageable);
+
 }
