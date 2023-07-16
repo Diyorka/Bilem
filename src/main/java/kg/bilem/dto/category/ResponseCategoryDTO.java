@@ -1,11 +1,15 @@
 package kg.bilem.dto.category;
 
+import kg.bilem.dto.subcategory.ResponseSubcategoryDTO;
 import kg.bilem.model.Category;
+import kg.bilem.model.Subcategory;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static kg.bilem.dto.subcategory.ResponseSubcategoryDTO.toResponseSubcategoryDTO;
 
 @Getter
 @Setter
