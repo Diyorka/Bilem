@@ -144,7 +144,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = userRepository.findByEmail(email).get();
         RecoveryToken recoveryToken = recoveryTokenRepository.findByUser(user);
-        if (Duration.between(recoveryToken.getCreatedAt(), LocalDateTime.now()).toMinutes() < 1) {
+        if (Duration.between(recoveryToken.getCreatedAt(), LocalDateTime.now()).toSeconds() < 59) {
             return ResponseEntity.badRequest().body("С последнего запроса прошло меньше минуты, попробуйте повторно позже");
         }
 

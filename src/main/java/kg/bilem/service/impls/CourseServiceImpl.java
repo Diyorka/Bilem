@@ -107,6 +107,20 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public Page<ResponseMainCourseDTO> getNewestAndPaidCourses(Pageable pageable) {
+        Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeOrderByCreatedAtDesc(Status.ACTIVE, CourseType.PAID, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getPopularAndPaidCourses(Pageable pageable) {
+        Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeOrderByNumberOfStudentsDesc(Status.ACTIVE, CourseType.PAID, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
     public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQuery(String query, Pageable pageable) {
         if(query == null){
             getAllCourses(pageable);
@@ -132,7 +146,6 @@ public class CourseServiceImpl implements CourseService {
         return Course.builder()
                 .title(courseDTO.getTitle())
                 .courseType(CourseType.of(courseDTO.getCourseType()))
-                .imageUrl(courseDTO.getImageUrl())
                 .videoUrl(courseDTO.getVideoUrl())
                 .description(courseDTO.getDescription())
                 .whatStudentGet(courseDTO.getWhatStudentGet())

@@ -72,6 +72,22 @@ public class CourseController {
         return courseService.getPopularAndFreeCourses(pageable);
     }
 
+    @GetMapping("/newest-and-paid-courses")
+    @Operation(
+            summary = "Получение всех новейших платных курсов"
+    )
+    public Page<ResponseMainCourseDTO> getNewestAndPaidCourses(@PageableDefault Pageable pageable){
+        return courseService.getNewestAndPaidCourses(pageable);
+    }
+
+    @GetMapping("/popular-and-paid-courses")
+    @Operation(
+            summary = "Получение всех популярных платных курсов"
+    )
+    public Page<ResponseMainCourseDTO> getPopularAndPaidCourses(@PageableDefault Pageable pageable){
+        return courseService.getPopularAndPaidCourses(pageable);
+    }
+
     @GetMapping("/search/{query}")
     @Operation(
             summary = "Поиск курса по названию"
