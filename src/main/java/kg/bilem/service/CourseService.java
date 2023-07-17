@@ -33,4 +33,7 @@ public interface CourseService {
 
     Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguageAndCourseType(String query, String language, String courseType, Pageable pageable);
 
+    ResponseEntity<String> approveCourse(Long courseId, User user);
+
+    Page<ResponseMainCourseDTO> getCoursesOnChecking(Pageable pageable, User user);
 }

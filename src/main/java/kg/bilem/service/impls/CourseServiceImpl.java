@@ -8,6 +8,7 @@ import kg.bilem.enums.Language;
 import kg.bilem.enums.Role;
 import kg.bilem.enums.Status;
 import kg.bilem.exception.AlreadyExistException;
+import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.Course;
 import kg.bilem.model.User;
@@ -53,10 +54,6 @@ public class CourseServiceImpl implements CourseService {
         Course course = buildCourse(courseDTO, user);
         course.setStatus(Status.CHECKING);
 
-//        int coursesCount = course.getSubcategory().getCategory().getCoursesCount();
-//        course.getSubcategory().getCategory().setCoursesCount(coursesCount+1);
-//        categoryRepository.save(course.getSubcategory().getCategory());
-
         return toResponseCourseDTO(courseRepository.save(course));
     }
 
@@ -73,6 +70,10 @@ public class CourseServiceImpl implements CourseService {
         course.setId(courseId);
         course.setStatus(Status.CHECKING);
         courseRepository.save(course);
+
+        int coursesCount = course.getSubcategory().getCategory().getCoursesCount();
+        course.getSubcategory().getCategory().setCoursesCount(coursesCount-1);
+        categoryRepository.save(course.getSubcategory().getCategory());
 
         return ResponseEntity.ok("Курс отправлен на модерацию");
     }
@@ -169,6 +170,33 @@ public class CourseServiceImpl implements CourseService {
         }
 
         Page<Course> courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCaseAndLanguageAndCourseType(Status.ACTIVE, query, lang, ct, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public ResponseEntity<String> approveCourse(Long courseId, User user) {
+        if(user.getRole() != Role.ADMIN){
+            throw new NoAccessException("У вас нет доступа на одобрение курсов");
+        }
+
+        Course course = courseRepository.findById(courseId)
+                .filter(c -> c.getStatus() == Status.CHECKING)
+                .orElseThrow(() -> new NotFoundException("Курс не существует либо уже активен"));
+
+        course.setStatus(Status.ACTIVE);
+        courseRepository.save(course);
+
+        int coursesCount = course.getSubcategory().getCategory().getCoursesCount();
+        course.getSubcategory().getCategory().setCoursesCount(coursesCount+1);
+        categoryRepository.save(course.getSubcategory().getCategory());
+
+        return ResponseEntity.ok("Курс успешно одобрен");
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getCoursesOnChecking(Pageable pageable, User user) {
+        Page<Course> courses = courseRepository.findAllByStatus(Status.CHECKING, pageable);
         List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
         return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
     }
