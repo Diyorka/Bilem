@@ -9,7 +9,10 @@ import java.util.List;
 public interface CategoryService {
     List<ResponseCategoryDTO> getAllCategories();
 
+    List<ResponseCategoryDTO> getTop8CategoriesByCourseCount();
+
     ResponseCategoryDTO getCategoryById(Long id);
 
     ResponseEntity<String> addCategory(RequestCategoryDTO categoryDTO);
+
 }

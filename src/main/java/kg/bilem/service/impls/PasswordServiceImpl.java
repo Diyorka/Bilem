@@ -47,7 +47,7 @@ public class PasswordServiceImpl implements PasswordService {
             sendToken(recoveryToken, user);
         } else {
             RecoveryToken getToken = recoveryTokenRepository.findByUser(user);
-            if(Duration.between(getToken.getCreatedAt(), LocalDateTime.now()).toMinutes() < 1){
+            if(Duration.between(getToken.getCreatedAt(), LocalDateTime.now()).toSeconds() < 59){
                 return ResponseEntity.badRequest().body("С последнего запроса прошло меньше минуты, попробуйте повторно позже");
             }
             recoveryTokenRepository.delete(getToken);

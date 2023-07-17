@@ -8,9 +8,11 @@ import kg.bilem.enums.Language;
 import kg.bilem.enums.Role;
 import kg.bilem.enums.Status;
 import kg.bilem.exception.AlreadyExistException;
+import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.Course;
 import kg.bilem.model.User;
+import kg.bilem.repository.CategoryRepository;
 import kg.bilem.repository.CourseRepository;
 import kg.bilem.repository.SubcategoryRepository;
 import kg.bilem.repository.UserRepository;
@@ -35,6 +37,7 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final SubcategoryRepository subcategoryRepository;
+    private final CategoryRepository categoryRepository;
 
 
     @Override
@@ -59,14 +62,18 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с айди " + courseId + " не найден"));
 
-        if(user.getRole() != Role.ADMIN || !user.getEmail().equals(course.getOwner().getEmail())){
+        if (user.getRole() != Role.ADMIN || !user.getEmail().equals(course.getOwner().getEmail())) {
             return ResponseEntity.badRequest().body("Вы не имеете права на редактирование данного курса");
         }
 
         course = buildCourse(courseDTO, user);
         course.setId(courseId);
-        course.setStatus(Status.NOT_ACTIVATED);
+        course.setStatus(Status.CHECKING);
         courseRepository.save(course);
+
+        int coursesCount = course.getSubcategory().getCategory().getCoursesCount();
+        course.getSubcategory().getCategory().setCoursesCount(coursesCount-1);
+        categoryRepository.save(course.getSubcategory().getCategory());
 
         return ResponseEntity.ok("Курс отправлен на модерацию");
     }
@@ -86,9 +93,118 @@ public class CourseServiceImpl implements CourseService {
         return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
     }
 
+    @Override
+    public Page<ResponseMainCourseDTO> getTopCourses(Pageable pageable) {
+        Page<Course> courses = courseRepository.findTopCourses(Status.ACTIVE, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getNewestAndFreeCourses(Pageable pageable) {
+        Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeOrderByCreatedAtDesc(Status.ACTIVE, CourseType.FREE, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getPopularAndFreeCourses(Pageable pageable) {
+        Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeOrderByNumberOfStudentsDesc(Status.ACTIVE, CourseType.FREE, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getNewestAndPaidCourses(Pageable pageable) {
+        Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeOrderByCreatedAtDesc(Status.ACTIVE, CourseType.PAID, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getPopularAndPaidCourses(Pageable pageable) {
+        Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeOrderByNumberOfStudentsDesc(Status.ACTIVE, CourseType.PAID, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQuery(String query, Pageable pageable) {
+        if (query == null) {
+            return getAllCourses(pageable);
+        }
+
+        Page<Course> courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCase(Status.ACTIVE, query, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguage(String query, String language, Pageable pageable) {
+        Language lang = Language.of(language);
+
+        if (query == null) {
+            Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeAndLanguage(Status.ACTIVE, CourseType.PAID, lang, pageable);
+            List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+            return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+        }
+
+        Page<Course> courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCaseAndLanguageAndCourseType(Status.ACTIVE, query, lang, CourseType.PAID, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguageAndCourseType(String query, String language, String courseType, Pageable pageable) {
+        Language lang = Language.of(language);
+        CourseType ct = CourseType.of(courseType);
+
+        if (query == null && ct != CourseType.FREE) {
+            Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeAndLanguage(Status.ACTIVE, CourseType.PAID, lang, pageable);
+            List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+            return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+        } else if (query == null) {
+            Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeAndLanguage(Status.ACTIVE, CourseType.FREE, lang, pageable);
+            List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+            return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+        }
+
+        Page<Course> courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCaseAndLanguageAndCourseType(Status.ACTIVE, query, lang, ct, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public ResponseEntity<String> approveCourse(Long courseId, User user) {
+        if(user.getRole() != Role.ADMIN){
+            throw new NoAccessException("У вас нет доступа на одобрение курсов");
+        }
+
+        Course course = courseRepository.findById(courseId)
+                .filter(c -> c.getStatus() == Status.CHECKING)
+                .orElseThrow(() -> new NotFoundException("Курс не существует либо уже активен"));
+
+        course.setStatus(Status.ACTIVE);
+        courseRepository.save(course);
+
+        int coursesCount = course.getSubcategory().getCategory().getCoursesCount();
+        course.getSubcategory().getCategory().setCoursesCount(coursesCount+1);
+        categoryRepository.save(course.getSubcategory().getCategory());
+
+        return ResponseEntity.ok("Курс успешно одобрен");
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getCoursesOnChecking(Pageable pageable, User user) {
+        Page<Course> courses = courseRepository.findAllByStatus(Status.CHECKING, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+
     private Course buildCourse(RequestCourseDTO courseDTO, User user) {
         Set<User> teachers = new HashSet<>();
-        if(courseDTO.getTeacherIds() != null) {
+        if (courseDTO.getTeacherIds() != null) {
             for (Long id : courseDTO.getTeacherIds()) {
                 User teacher = userRepository.findById(id)
                         .filter(t -> t.getRole() == Role.TEACHER)
@@ -100,7 +216,6 @@ public class CourseServiceImpl implements CourseService {
         return Course.builder()
                 .title(courseDTO.getTitle())
                 .courseType(CourseType.of(courseDTO.getCourseType()))
-                .imageUrl(courseDTO.getImageUrl())
                 .videoUrl(courseDTO.getVideoUrl())
                 .description(courseDTO.getDescription())
                 .whatStudentGet(courseDTO.getWhatStudentGet())
@@ -109,7 +224,9 @@ public class CourseServiceImpl implements CourseService {
                         .orElseThrow(() -> new NotFoundException("Подкатегория с таким айди не найдена")))
                 .teachers(teachers)
                 .students(new HashSet<>())
+                .reviews(new HashSet<>())
                 .owner(user)
+                .averageScore((double) 0)
                 .language(Language.of(courseDTO.getLanguage()))
                 .build();
 

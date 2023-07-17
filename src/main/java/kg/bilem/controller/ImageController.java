@@ -8,6 +8,7 @@ import kg.bilem.service.impls.ImageServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,5 +34,17 @@ public class ImageController {
     public ResponseEntity<String> saveUserImage(@AuthenticationPrincipal User user,
                                                 @RequestPart MultipartFile file) throws IOException {
         return imageService.saveForUser(user, file);
+    }
+
+    @PostMapping(value = "/upload/course-image/{courseId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAnyAuthority('TEACHER', 'ADMIN')")
+    @Operation(
+            summary = "Добавление изображения курса"
+    )
+    public ResponseEntity<String> saveCourseImage(@PathVariable Long courseId,
+                                                @RequestPart MultipartFile file,
+                                                @AuthenticationPrincipal User user) throws IOException {
+        return imageService.saveForCourse(courseId, file, user);
     }
 }

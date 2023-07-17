@@ -3,6 +3,7 @@ package kg.bilem.service.impls;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import kg.bilem.exception.FileEmptyException;
+import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.Course;
 import kg.bilem.model.User;
@@ -62,6 +63,10 @@ public class ImageServiceImpl implements ImageService {
     public ResponseEntity<String> saveForCourse(Long courseId, MultipartFile file, User user) throws IOException {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с айди " + courseId + " не найден"));
+
+        if(!user.getEmail().equals(course.getOwner().getEmail())){
+            throw new NoAccessException("У вас нет доступа на добавление изображения к данному курсу");
+        }
 
         course.setImageUrl(saveImage(file));
         courseRepository.save(course);

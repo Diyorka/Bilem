@@ -33,6 +33,14 @@ public class CategoryController {
         return categoryService.getAllCategories();
     }
 
+    @GetMapping("/top-8-categories")
+    @Operation(
+            summary = "Получение топ 8 категорий по количеству курсов"
+    )
+    public List<ResponseCategoryDTO> getTop8CategoriesByCourseCount(){
+        return categoryService.getTop8CategoriesByCourseCount();
+    }
+
     @GetMapping("/{id}")
     @Operation(
             summary = "Получение категории по айди"

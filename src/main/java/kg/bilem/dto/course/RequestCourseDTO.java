@@ -17,8 +17,6 @@ public class RequestCourseDTO {
     @NotBlank(message = "Название курса не может быть пустым")
     String title;
 
-    String imageUrl;
-
     String videoUrl;
 
     @NotBlank(message = "Описание не может быть пустым")
