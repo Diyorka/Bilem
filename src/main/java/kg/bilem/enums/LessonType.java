@@ -1,5 +1,6 @@
 package kg.bilem.enums;
 
+import kg.bilem.exception.NotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +17,6 @@ public enum LessonType {
         return Stream.of(LessonType.values())
                 .filter(l -> l.getLessonType().equals(lessonType))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NotFoundException("Тип курса не найден"));
     }
 }

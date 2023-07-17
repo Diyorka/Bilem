@@ -1,5 +1,6 @@
 package kg.bilem.enums;
 
+import kg.bilem.exception.NotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +17,6 @@ public enum Language {
         return Stream.of(Language.values())
                 .filter(l -> l.getLanguage().equals(language))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NotFoundException("Язык не найден"));
     }
 }

@@ -10,11 +10,14 @@ import org.springframework.http.ResponseEntity;
 
 public interface CourseService {
     ResponseCourseDTO createCourse(RequestCourseDTO courseDTO, User user);
+
     ResponseEntity<String> editCourse(Long courseId, RequestCourseDTO courseDTO, User user);
 
     ResponseCourseDTO getCourseById(Long courseId);
 
     Page<ResponseMainCourseDTO> getAllCourses(Pageable pageable);
+
+    Page<ResponseMainCourseDTO> getTopCourses(Pageable pageable);
 
     Page<ResponseMainCourseDTO> getNewestAndFreeCourses(Pageable pageable);
 
@@ -25,5 +28,9 @@ public interface CourseService {
     Page<ResponseMainCourseDTO> getPopularAndPaidCourses(Pageable pageable);
 
     Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQuery(String query, Pageable pageable);
+
+    Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguage(String query, String language, Pageable pageable);
+
+    Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguageAndCourseType(String query, String language, String courseType, Pageable pageable);
 
 }
