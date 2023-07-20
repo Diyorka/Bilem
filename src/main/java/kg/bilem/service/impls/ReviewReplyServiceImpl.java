@@ -4,10 +4,7 @@ import kg.bilem.dto.reviewReply.RequestReviewReplyDTO;
 import kg.bilem.enums.Status;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
-import kg.bilem.model.Course;
-import kg.bilem.model.Review;
-import kg.bilem.model.ReviewReply;
-import kg.bilem.model.User;
+import kg.bilem.model.*;
 import kg.bilem.repository.ReviewReplyRepository;
 import kg.bilem.repository.ReviewRepository;
 import kg.bilem.service.ReviewReplyService;
@@ -33,9 +30,20 @@ public class ReviewReplyServiceImpl implements ReviewReplyService {
             throw new NoAccessException("Вы не можете отвечать на отзывы данного курса");
         }
 
+        sendNotification(review.getUser(), reviewReplyDTO, course);
         reviewReplyRepository.save(constructReviewReply(reviewReplyDTO, review, user));
 
         return ResponseEntity.ok("Ответ на отзыв успешно добавлен");
+    }
+
+    private void sendNotification(User user, RequestReviewReplyDTO reviewReplyDTO, Course course) {
+        Notification notification = new Notification();
+        notification.setUser(user);
+        notification.setHeader("Получен ответ на отзыв!");
+        notification.setMessage("Вы получили ответ на свой отзыв под курсом '" + course.getTitle() +
+                "'.\nТекст ответа: " + reviewReplyDTO.getText());
+        notification.setStatus(Status.ACTIVE);
+
     }
 
     @Override
