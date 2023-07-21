@@ -22,10 +22,13 @@ public class ResponseCategoryDTO {
 
     String name;
 
+    int coursesCount;
+
     public static ResponseCategoryDTO toResponseCategoryDTO(Category category){
         return ResponseCategoryDTO.builder()
                 .id(category.getId())
                 .name(category.getName())
+                .coursesCount(category.getCoursesCount())
                 .build();
     }
 
