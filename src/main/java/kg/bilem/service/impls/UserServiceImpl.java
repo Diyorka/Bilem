@@ -109,4 +109,28 @@ public class UserServiceImpl implements UserService {
     public GetUserDTO getUserInfo(User user) {
         return toGetUserDto(user);
     }
+
+    @Override
+    public ResponseEntity<String> subscribeUser(Long userId, User subscriber) {
+        User user = userRepository.findById(userId)
+                .filter(u -> u.getStatus() == Status.ACTIVE)
+                .orElseThrow(() -> new NotFoundException("Пользователь с таким айди не найден"));
+
+        subscriber.getSubscriptions().add(user);
+        userRepository.save(subscriber);
+
+        return ResponseEntity.ok("Вы успешно подписались на пользователя с айди " + userId);
+    }
+
+    @Override
+    public Page<GetUserDTO> getUserSubscriptions(User user, Pageable pageable) {
+        List<GetUserDTO> users = toGetUserDto(user.getSubscriptions());
+        return new PageImpl<>(users, pageable, users.size());
+    }
+
+    @Override
+    public Page<GetUserDTO> getUserSubscribers(User user, Pageable pageable) {
+        List<GetUserDTO> users = toGetUserDto(user.getSubscribers());
+        return new PageImpl<>(users, pageable, users.size());
+    }
 }

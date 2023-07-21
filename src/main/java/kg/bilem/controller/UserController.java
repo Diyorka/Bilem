@@ -32,8 +32,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserServiceImpl userService;
 
-    @SecurityRequirement(name = "JWT")
     @GetMapping("/my-info")
+    @SecurityRequirement(name = "JWT")
     @Operation(
             summary = "Получение данных о пользователе"
     )
@@ -41,9 +41,8 @@ public class UserController {
         return userService.getUserInfo(user);
     }
 
-
-    @SecurityRequirement(name = "JWT")
     @PutMapping("/change-my-info")
+    @SecurityRequirement(name = "JWT")
     @Operation(
             summary = "Изменение данных авторизованного пользователя"
     )
@@ -52,4 +51,33 @@ public class UserController {
         return userService.changeUserInfo(userDto, user);
     }
 
+    @GetMapping("/my-subscriptions")
+    @SecurityRequirement(name = "JWT")
+    @Operation(
+            summary = "Получение подписок пользователя"
+    )
+    public Page<GetUserDTO> getUserSubscriptions(@PageableDefault Pageable pageable,
+                                                 @AuthenticationPrincipal User user){
+        return userService.getUserSubscriptions(user, pageable);
+    }
+
+    @GetMapping("/my-subscribers")
+    @SecurityRequirement(name = "JWT")
+    @Operation(
+            summary = "Получение подписчиков пользователя"
+    )
+    public Page<GetUserDTO> getUserSubscribers(@PageableDefault Pageable pageable,
+                                                 @AuthenticationPrincipal User user){
+        return userService.getUserSubscribers(user, pageable);
+    }
+
+    @PutMapping("/subscribe/{userId}")
+    @SecurityRequirement(name = "JWT")
+    @Operation(
+            summary = "Подписаться на пользователя"
+    )
+    public ResponseEntity<String> subscribeUser(@PathVariable Long userId,
+                                                @AuthenticationPrincipal User user){
+        return userService.subscribeUser(userId, user);
+    }
 }
