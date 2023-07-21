@@ -32,26 +32,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserServiceImpl userService;
 
-    @GetMapping("/all")
-    @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(
-            summary = "Получение всех пользователей"
-    )
-    public Page<GetUserDTO> getAllUsers(@PageableDefault Pageable pageable) {
-        return userService.getAllUsers(pageable);
-    }
-
-    @GetMapping("/all/active")
-    @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(
-            summary = "Получение активных пользователей"
-    )
-    public Page<GetUserDTO> getAllActiveUsers(@PageableDefault Pageable pageable) {
-        return userService.getAllActiveUsers(pageable);
-    }
-
     @SecurityRequirement(name = "JWT")
     @PutMapping("/change-my-info")
     @Operation(
@@ -60,16 +40,6 @@ public class UserController {
     public GetUserDTO changeUserInfo(@RequestBody @Valid UpdateUserDTO userDto,
                                      @AuthenticationPrincipal User user) {
         return userService.changeUserInfo(userDto, user);
-    }
-
-    @PostMapping("/addAdmin")
-    @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(
-            summary = "Добавление нового администратора"
-    )
-    public ResponseEntity<String> addAdmin(@RequestBody CreateUserDTO userDto) {
-        return userService.addAdmin(userDto);
     }
 
 }

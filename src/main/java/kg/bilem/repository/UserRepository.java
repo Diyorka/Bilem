@@ -1,5 +1,6 @@
 package kg.bilem.repository;
 
+import kg.bilem.enums.Role;
 import kg.bilem.enums.Status;
 import kg.bilem.model.User;
 import org.springframework.data.domain.Page;
@@ -16,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
     Page<User> findAllByStatus(Status active, Pageable pageable);
+
+    Page<User> findAllByStatusAndRole(Status active, Role role, Pageable pageable);
 }

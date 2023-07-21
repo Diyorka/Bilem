@@ -52,6 +52,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Page<GetUserDTO> getAllStudents(Pageable pageable) {
+        Page<User> users = userRepository.findAllByStatusAndRole(Status.ACTIVE, Role.STUDENT, pageable);
+        List<GetUserDTO> userDTOS = toGetUserDto(users.toSet());
+        return new PageImpl<>(userDTOS, pageable, users.getTotalElements());
+    }
+
+    @Override
+    public Page<GetUserDTO> getAllTeachers(Pageable pageable) {
+        Page<User> users = userRepository.findAllByStatusAndRole(Status.ACTIVE, Role.TEACHER, pageable);
+        List<GetUserDTO> userDTOS = toGetUserDto(users.toSet());
+        return new PageImpl<>(userDTOS, pageable, users.getTotalElements());
+    }
+
+    @Override
     public GetUserDTO changeUserInfo(UpdateUserDTO userDto, User user) {
         if (!userDto.getEmail().equals(user.getEmail()) && userRepository.existsByEmail(userDto.getEmail())) {
             throw new AlreadyExistException("Пользователь с такой почтой уже зарегистрирован");
