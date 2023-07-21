@@ -104,4 +104,9 @@ public class UserServiceImpl implements UserService {
 
         return ResponseEntity.ok("Администратор успешно добавлен");
     }
+
+    @Override
+    public GetUserDTO getUserInfo(User user) {
+        return toGetUserDto(user);
+    }
 }

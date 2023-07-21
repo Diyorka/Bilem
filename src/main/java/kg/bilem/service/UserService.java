@@ -23,4 +23,6 @@ public interface UserService {
     GetUserDTO changeUserInfo(UpdateUserDTO userDto, User user);
 
     ResponseEntity<String> addAdmin(CreateUserDTO userDto);
+
+    GetUserDTO getUserInfo(User user);
 }

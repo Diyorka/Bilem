@@ -33,6 +33,16 @@ public class UserController {
     private final UserServiceImpl userService;
 
     @SecurityRequirement(name = "JWT")
+    @GetMapping("/my-info")
+    @Operation(
+            summary = "Получение данных о пользователе"
+    )
+    public GetUserDTO getUserInfo(@AuthenticationPrincipal User user){
+        return userService.getUserInfo(user);
+    }
+
+
+    @SecurityRequirement(name = "JWT")
     @PutMapping("/change-my-info")
     @Operation(
             summary = "Изменение данных авторизованного пользователя"
