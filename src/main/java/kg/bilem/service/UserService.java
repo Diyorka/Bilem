@@ -26,11 +26,11 @@ public interface UserService {
 
     GetUserDTO getUserInfo(User user);
 
-    ResponseEntity<String> subscribeUser(Long userId, User user);
-
-    ResponseEntity<String> unsubscribeUser(Long userId, User user);
-
-    Page<GetUserDTO> getUserSubscriptions(User user, Pageable pageable);
-
-    Page<GetUserDTO> getUserSubscribers(User user, Pageable pageable);
+//    ResponseEntity<String> subscribeUser(Long userId, User user);
+//
+//    ResponseEntity<String> unsubscribeUser(Long userId, User user);
+//
+//    Page<GetUserDTO> getUserSubscriptions(User user, Pageable pageable);
+//
+//    Page<GetUserDTO> getUserSubscribers(User user, Pageable pageable);
 }
