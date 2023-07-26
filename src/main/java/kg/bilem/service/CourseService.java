@@ -27,14 +27,11 @@ public interface CourseService {
 
     Page<ResponseMainCourseDTO> getPopularAndPaidCourses(Pageable pageable);
 
-    Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQuery(String query, Pageable pageable);
-
-    Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguage(String query, String language, Pageable pageable);
-
     Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguageAndCourseType(String query, String language, String courseType, Pageable pageable);
 
     ResponseEntity<String> approveCourse(Long courseId, User user);
 
     Page<ResponseMainCourseDTO> getCoursesOnChecking(Pageable pageable, User user);
+
 
 }
