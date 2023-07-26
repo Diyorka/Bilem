@@ -32,4 +32,9 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("SELECT c FROM Course c WHERE c.status = :status ORDER BY SIZE(c.students) DESC")
     Page<Course> findTopCourses(Status status, Pageable pageable);
 
+    Page<Course> findAllByStatusAndTitleContainsIgnoreCaseAndLanguage(Status active, String query, Language lang, Pageable pageable);
+
+    Page<Course> findAllByStatusAndTitleContainsIgnoreCaseAndCourseType(Status active, String query, CourseType courseType, Pageable pageable);
+
+    Page<Course> findAllByStatusAndLanguage(Status active, Language lang, Pageable pageable);
 }
