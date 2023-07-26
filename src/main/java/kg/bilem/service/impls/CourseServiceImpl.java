@@ -129,27 +129,47 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguageAndCourseType(String query, String language, String courseType, Pageable pageable) {
-        Page<Course> courses;
-
-        if (query != null && language != null && courseType != null) {
-            courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCaseAndLanguageAndCourseType(Status.ACTIVE, query, Language.of(language), CourseType.of(courseType), pageable);
-        } else if (query != null && language != null) {
-            courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCaseAndLanguage(Status.ACTIVE, query, Language.of(language), pageable);
-        } else if (query != null && courseType != null) {
-            courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCaseAndCourseType(Status.ACTIVE, query, CourseType.of(courseType), pageable);
-        } else if (language != null && courseType != null) {
-            courses = courseRepository.findAllByStatusAndCourseTypeAndLanguage(Status.ACTIVE, CourseType.of(courseType), Language.of(language), pageable);
-        } else if (query != null) {
-            courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCase(Status.ACTIVE, query, pageable);
-        } else if (language != null) {
-            courses = courseRepository.findAllByStatusAndLanguage(Status.ACTIVE, Language.of(language), pageable);
-        } else if (courseType != null) {
-            courses = courseRepository.findAllByStatusAndCourseTypeOrderByCreatedAtDesc(Status.ACTIVE, CourseType.of(courseType), pageable);
-        } else {
-            courses = courseRepository.findAllByStatus(Status.ACTIVE, pageable);
+    public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQuery(String query, Pageable pageable) {
+        if (query == null) {
+            return getAllCourses(pageable);
         }
 
+        Page<Course> courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCase(Status.ACTIVE, query, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguage(String query, String language, Pageable pageable) {
+        Language lang = Language.of(language);
+
+        if (query == null) {
+            Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeAndLanguage(Status.ACTIVE, CourseType.PAID, lang, pageable);
+            List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+            return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+        }
+
+        Page<Course> courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCaseAndLanguageAndCourseType(Status.ACTIVE, query, lang, CourseType.PAID, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguageAndCourseType(String query, String language, String courseType, Pageable pageable) {
+        Language lang = Language.of(language);
+        CourseType ct = CourseType.of(courseType);
+
+        if (query == null && ct != CourseType.FREE) {
+            Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeAndLanguage(Status.ACTIVE, CourseType.PAID, lang, pageable);
+            List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+            return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+        } else if (query == null) {
+            Page<Course> courses = courseRepository.findAllByStatusAndCourseTypeAndLanguage(Status.ACTIVE, CourseType.FREE, lang, pageable);
+            List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+            return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+        }
+
+        Page<Course> courses = courseRepository.findAllByStatusAndTitleContainsIgnoreCaseAndLanguageAndCourseType(Status.ACTIVE, query, lang, ct, pageable);
         List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
         return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
     }
