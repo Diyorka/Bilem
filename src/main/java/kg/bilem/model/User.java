@@ -75,17 +75,6 @@ public class User extends BaseEntity implements UserDetails {
     )
     Set<Course> studyingCourses;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_subscriptions",
-            joinColumns = @JoinColumn(name = "subscriber_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    Set<User> subscriptions;
-
-    @ManyToMany(mappedBy = "subscriptions", fetch = FetchType.EAGER)
-    Set<User> subscribers;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

@@ -51,43 +51,43 @@ public class UserController {
         return userService.changeUserInfo(userDto, user);
     }
 
-    @GetMapping("/my-subscriptions")
-    @SecurityRequirement(name = "JWT")
-    @Operation(
-            summary = "Получение подписок пользователя"
-    )
-    public Page<GetUserDTO> getUserSubscriptions(@PageableDefault Pageable pageable,
-                                                 @AuthenticationPrincipal User user){
-        return userService.getUserSubscriptions(user, pageable);
-    }
-
-    @GetMapping("/my-subscribers")
-    @SecurityRequirement(name = "JWT")
-    @Operation(
-            summary = "Получение подписчиков пользователя"
-    )
-    public Page<GetUserDTO> getUserSubscribers(@PageableDefault Pageable pageable,
-                                                 @AuthenticationPrincipal User user){
-        return userService.getUserSubscribers(user, pageable);
-    }
-
-    @PutMapping("/subscribe/{userId}")
-    @SecurityRequirement(name = "JWT")
-    @Operation(
-            summary = "Подписаться на пользователя"
-    )
-    public ResponseEntity<String> subscribeUser(@PathVariable Long userId,
-                                                @AuthenticationPrincipal User user){
-        return userService.subscribeUser(userId, user);
-    }
-
-    @PutMapping("/unsubscribe/{userId}")
-    @SecurityRequirement(name = "JWT")
-    @Operation(
-            summary = "Отписаться от пользователя"
-    )
-    public ResponseEntity<String> unsubscribeUser(@PathVariable Long userId,
-                                                @AuthenticationPrincipal User user){
-        return userService.unsubscribeUser(userId, user);
-    }
+//    @GetMapping("/my-subscriptions")
+//    @SecurityRequirement(name = "JWT")
+//    @Operation(
+//            summary = "Получение подписок пользователя"
+//    )
+//    public Page<GetUserDTO> getUserSubscriptions(@PageableDefault Pageable pageable,
+//                                                 @AuthenticationPrincipal User user){
+//        return userService.getUserSubscriptions(user, pageable);
+//    }
+//
+//    @GetMapping("/my-subscribers")
+//    @SecurityRequirement(name = "JWT")
+//    @Operation(
+//            summary = "Получение подписчиков пользователя"
+//    )
+//    public Page<GetUserDTO> getUserSubscribers(@PageableDefault Pageable pageable,
+//                                                 @AuthenticationPrincipal User user){
+//        return userService.getUserSubscribers(user, pageable);
+//    }
+//
+//    @PutMapping("/subscribe/{userId}")
+//    @SecurityRequirement(name = "JWT")
+//    @Operation(
+//            summary = "Подписаться на пользователя"
+//    )
+//    public ResponseEntity<String> subscribeUser(@PathVariable Long userId,
+//                                                @AuthenticationPrincipal User user){
+//        return userService.subscribeUser(userId, user);
+//    }
+//
+//    @PutMapping("/unsubscribe/{userId}")
+//    @SecurityRequirement(name = "JWT")
+//    @Operation(
+//            summary = "Отписаться от пользователя"
+//    )
+//    public ResponseEntity<String> unsubscribeUser(@PathVariable Long userId,
+//                                                @AuthenticationPrincipal User user){
+//        return userService.unsubscribeUser(userId, user);
+//    }
 }
