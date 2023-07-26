@@ -6,6 +6,7 @@ import kg.bilem.dto.user.UpdateUserDTO;
 import kg.bilem.enums.Role;
 import kg.bilem.enums.Status;
 import kg.bilem.exception.AlreadyExistException;
+import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.exception.UserAlreadyExistException;
 import kg.bilem.model.User;
@@ -116,10 +117,33 @@ public class UserServiceImpl implements UserService {
                 .filter(u -> u.getStatus() == Status.ACTIVE)
                 .orElseThrow(() -> new NotFoundException("Пользователь с таким айди не найден"));
 
+        if(userId.equals(subscriber.getId())){
+            throw new NoAccessException("Вы не можете подписаться на самого себя");
+        }
+
+        if(subscriber.getSubscriptions().contains(user)){
+            throw new AlreadyExistException("Вы уже подписаны на данного пользователя");
+        }
+
         subscriber.getSubscriptions().add(user);
         userRepository.save(subscriber);
 
         return ResponseEntity.ok("Вы успешно подписались на пользователя с айди " + userId);
+    }
+
+    @Override
+    public ResponseEntity<String> unsubscribeUser(Long userId, User subscriber) {
+        User user = userRepository.findById(userId)
+                .filter(u -> u.getStatus() == Status.ACTIVE)
+                .orElseThrow(() -> new NotFoundException("Пользователь с таким айди не найден"));
+
+        if (!subscriber.getSubscriptions().contains(user)){
+            throw new NotFoundException("Вы не подписаны на данного пользователя");
+        }
+
+        subscriber.getSubscriptions().remove(user);
+        userRepository.save(subscriber);
+        return ResponseEntity.ok("Вы успешно отписались от пользователя с айди " + userId);
     }
 
     @Override

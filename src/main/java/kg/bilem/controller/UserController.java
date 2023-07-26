@@ -80,4 +80,14 @@ public class UserController {
                                                 @AuthenticationPrincipal User user){
         return userService.subscribeUser(userId, user);
     }
+
+    @PutMapping("/unsubscribe/{userId}")
+    @SecurityRequirement(name = "JWT")
+    @Operation(
+            summary = "Отписаться от пользователя"
+    )
+    public ResponseEntity<String> unsubscribeUser(@PathVariable Long userId,
+                                                @AuthenticationPrincipal User user){
+        return userService.unsubscribeUser(userId, user);
+    }
 }
