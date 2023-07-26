@@ -98,12 +98,32 @@ public class CourseController {
 
     @GetMapping("/search")
     @Operation(
-            summary = "Поиск курса по названию, языку и типу"
+            summary = "Поиск курса по названию"
+    )
+    public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQuery(@RequestParam(required = false) String query,
+                                                                      @PageableDefault Pageable pageable){
+        return courseService.getAllCoursesWithSearchByQuery(query, pageable);
+    }
+
+    @GetMapping("/search/{language}")
+    @Operation(
+            summary = "Поиск курса по названию и языку"
+    )
+    public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguage(@RequestParam(required = false) String query,
+                                                                                 @PathVariable String language,
+                                                                                 @PageableDefault Pageable pageable){
+        return courseService.getAllCoursesWithSearchByQueryAndLanguage(query, language, pageable);
+    }
+
+    @GetMapping("/search/{language}/{course-type}")
+    @Operation(
+            summary = "Поиск курса по названию и языку"
     )
     public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguageAndCourseType(@RequestParam(required = false) String query,
-                                                                                 @RequestParam(required = false) String language,
-                                                                                 @RequestParam(required = false) String courseType,
-                                                                                 @PageableDefault Pageable pageable){
+                                                                                              @PathVariable("language") String language,
+                                                                                              @PathVariable("course-type") String courseType,
+                                                                                              @PageableDefault Pageable pageable){
         return courseService.getAllCoursesWithSearchByQueryAndLanguageAndCourseType(query, language, courseType, pageable);
     }
+
 }
