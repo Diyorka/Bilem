@@ -25,12 +25,4 @@ public interface UserService {
     ResponseEntity<String> addAdmin(CreateUserDTO userDto);
 
     GetUserDTO getUserInfo(User user);
-
-//    ResponseEntity<String> subscribeUser(Long userId, User user);
-//
-//    ResponseEntity<String> unsubscribeUser(Long userId, User user);
-//
-//    Page<GetUserDTO> getUserSubscriptions(User user, Pageable pageable);
-//
-//    Page<GetUserDTO> getUserSubscribers(User user, Pageable pageable);
 }
