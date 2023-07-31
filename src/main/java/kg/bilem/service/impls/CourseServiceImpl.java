@@ -11,19 +11,19 @@ import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.Course;
+import kg.bilem.model.Mailing;
 import kg.bilem.model.User;
-import kg.bilem.repository.CategoryRepository;
-import kg.bilem.repository.CourseRepository;
-import kg.bilem.repository.SubcategoryRepository;
-import kg.bilem.repository.UserRepository;
+import kg.bilem.repository.*;
 import kg.bilem.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +38,8 @@ public class CourseServiceImpl implements CourseService {
     private final UserRepository userRepository;
     private final SubcategoryRepository subcategoryRepository;
     private final CategoryRepository categoryRepository;
+    private final MailingRepository mailingRepository;
+    private final EmailServiceImpl emailService;
 
 
     @Override
@@ -172,6 +174,8 @@ public class CourseServiceImpl implements CourseService {
         course.getSubcategory().getCategory().setCoursesCount(coursesCount + 1);
         categoryRepository.save(course.getSubcategory().getCategory());
 
+        sendMails();
+
         return ResponseEntity.ok("Курс успешно одобрен");
     }
 
@@ -182,6 +186,19 @@ public class CourseServiceImpl implements CourseService {
         return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
     }
 
+    private void sendMails() {
+        List<Mailing> mailings = mailingRepository.findAll();
+        for(Mailing mailing:mailings){
+            SimpleMailMessage activationEmail = new SimpleMailMessage();
+            activationEmail.setFrom("bilem@gmail.com");
+            activationEmail.setTo(mailing.getEmail());
+            activationEmail.setSubject("Bilem KG");
+            activationEmail.setText("На нашей платформе был добавлен новый курс!\n" +
+                    "Перейдите на сайт для того чтобы посмотреть более подробную информацию");
+
+            emailService.sendEmail(activationEmail);
+        }
+    }
 
     private Course buildCourse(RequestCourseDTO courseDTO, User user) {
         Set<User> teachers = new HashSet<>();

@@ -3,6 +3,7 @@ package kg.bilem.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import kg.bilem.dto.course.RequestCourseDTO;
 import kg.bilem.dto.course.ResponseCourseDTO;
 import kg.bilem.dto.course.ResponseMainCourseDTO;
@@ -32,7 +33,7 @@ public class CourseController {
     @Operation(
             summary = "Создание курса"
     )
-    public ResponseCourseDTO createCourse(@RequestBody RequestCourseDTO courseDTO,
+    public ResponseCourseDTO createCourse(@RequestBody @Valid RequestCourseDTO courseDTO,
                                           @AuthenticationPrincipal User user) {
         return courseService.createCourse(courseDTO, user);
     }

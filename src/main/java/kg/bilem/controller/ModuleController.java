@@ -3,6 +3,7 @@ package kg.bilem.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import kg.bilem.dto.course.RequestCourseDTO;
 import kg.bilem.dto.course.ResponseCourseDTO;
 import kg.bilem.dto.module.RequestModuleDTO;
@@ -29,7 +30,7 @@ public class ModuleController {
     @Operation(
             summary = "Создание модуля"
     )
-    public ResponseModuleDTO createModule(@RequestBody RequestModuleDTO moduleDTO,
+    public ResponseModuleDTO createModule(@RequestBody @Valid RequestModuleDTO moduleDTO,
                                           @AuthenticationPrincipal User user) {
         return moduleService.createModule(moduleDTO, user);
     }

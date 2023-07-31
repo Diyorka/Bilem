@@ -3,6 +3,7 @@ package kg.bilem.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import kg.bilem.dto.category.RequestCategoryDTO;
 import kg.bilem.dto.category.ResponseCategoryDTO;
 import kg.bilem.dto.city.ResponseCityDTO;
@@ -55,7 +56,7 @@ public class CategoryController {
     @Operation(
             summary = "Добавление новой категории"
     )
-    public ResponseEntity<String> addCategory(@RequestBody RequestCategoryDTO categoryDTO) {
+    public ResponseEntity<String> addCategory(@RequestBody @Valid RequestCategoryDTO categoryDTO) {
         return categoryService.addCategory(categoryDTO);
     }
 }

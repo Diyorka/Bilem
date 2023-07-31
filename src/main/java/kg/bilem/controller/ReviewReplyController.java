@@ -3,6 +3,7 @@ package kg.bilem.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import kg.bilem.dto.reviewReply.RequestReviewReplyDTO;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.ReviewReplyServiceImpl;
@@ -30,7 +31,7 @@ public class ReviewReplyController {
             summary = "Добавление ответа на отзыв"
     )
     public ResponseEntity<String> addReviewReply(@PathVariable Long reviewId,
-                                                 @RequestBody RequestReviewReplyDTO reviewReplyDTO,
+                                                 @RequestBody @Valid RequestReviewReplyDTO reviewReplyDTO,
                                                  @AuthenticationPrincipal User user){
         return reviewReplyService.addReviewReply(reviewId, reviewReplyDTO, user);
     }
