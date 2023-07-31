@@ -3,6 +3,7 @@ package kg.bilem.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import kg.bilem.dto.course.ResponseMainCourseDTO;
 import kg.bilem.dto.user.CreateUserDTO;
 import kg.bilem.dto.user.GetUserDTO;
@@ -98,7 +99,7 @@ public class AdminController {
     @Operation(
             summary = "Добавление нового администратора"
     )
-    public ResponseEntity<String> addAdmin(@RequestBody CreateUserDTO userDto) {
+    public ResponseEntity<String> addAdmin(@RequestBody @Valid CreateUserDTO userDto) {
         return userService.addAdmin(userDto);
     }
 }

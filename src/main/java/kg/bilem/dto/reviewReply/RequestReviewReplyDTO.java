@@ -1,6 +1,7 @@
 package kg.bilem.dto.reviewReply;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,6 +12,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RequestReviewReplyDTO {
-    @NotBlank(message = "Ответ на отзыв не может быть пустым")
+    @NotEmpty(message = "Ответ на отзыв не может быть пустым")
     String text;
 }

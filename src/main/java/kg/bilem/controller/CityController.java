@@ -3,6 +3,7 @@ package kg.bilem.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import kg.bilem.dto.city.RequestCityDTO;
 import kg.bilem.dto.city.ResponseCityDTO;
 import kg.bilem.service.impls.CityServiceImpl;
@@ -46,7 +47,7 @@ public class CityController {
     @Operation(
             summary = "Добавление города"
     )
-    public ResponseEntity<String> addCity(@RequestBody RequestCityDTO cityDTO) {
+    public ResponseEntity<String> addCity(@RequestBody @Valid RequestCityDTO cityDTO) {
         return cityService.addCity(cityDTO);
     }
 
