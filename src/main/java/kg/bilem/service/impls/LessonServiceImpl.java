@@ -37,7 +37,7 @@ public class LessonServiceImpl implements LessonService {
         Module module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new NotFoundException("Модуль с таким айди не найден"));
 
-        if (!user.getStudyingCourses().contains(module.getCourse()) && !user.getEmail().equals(module.getCourse().getOwner().getEmail())) {
+        if (!module.getCourse().getStudents().contains(user) && !user.getEmail().equals(module.getCourse().getOwner().getEmail())) {
             throw new NoAccessException("Вы не проходите данный курс");
         }
 
