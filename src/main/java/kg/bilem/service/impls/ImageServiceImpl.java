@@ -10,7 +10,9 @@ import kg.bilem.model.User;
 import kg.bilem.repository.CourseRepository;
 import kg.bilem.repository.UserRepository;
 import kg.bilem.service.ImageService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,10 +24,11 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
-    private final UserRepository userRepository;
-    private final CourseRepository courseRepository;
+    UserRepository userRepository;
+    CourseRepository courseRepository;
 
     @Override
     public String saveImage(MultipartFile file) throws IOException {

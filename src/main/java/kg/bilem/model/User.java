@@ -64,10 +64,10 @@ public class User extends BaseEntity implements UserDetails {
 
     String dribble;
 
-    @ManyToMany(mappedBy = "teachers")
+    @ManyToMany(mappedBy = "teachers", fetch = FetchType.EAGER)
     Set<Course> teachingCourses;
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "student_course",
             joinColumns = @JoinColumn(name = "user_id"),

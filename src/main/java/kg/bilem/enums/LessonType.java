@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Getter
 public enum LessonType {
-    TEXT("Текстовый"), VIDEO("Видео"), TEST("Тест");
+    TEXT("Текст"), VIDEO("Видео"), TEST("Тест");
 
     private final String lessonType;
 
@@ -17,6 +17,6 @@ public enum LessonType {
         return Stream.of(LessonType.values())
                 .filter(l -> l.getLessonType().equals(lessonType))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Тип курса не найден"));
+                .orElseThrow(() -> new NotFoundException("Тип урока не найден"));
     }
 }

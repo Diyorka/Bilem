@@ -6,15 +6,15 @@ import kg.bilem.dto.user.UpdateUserDTO;
 import kg.bilem.enums.Role;
 import kg.bilem.enums.Status;
 import kg.bilem.exception.AlreadyExistException;
-import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.exception.UserAlreadyExistException;
 import kg.bilem.model.User;
 import kg.bilem.repository.CityRepository;
-import kg.bilem.repository.RecoveryTokenRepository;
 import kg.bilem.repository.UserRepository;
 import kg.bilem.service.UserService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -31,12 +31,13 @@ import static kg.bilem.dto.user.GetUserDTO.toGetUserDto;
 
 @Service
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-    private final CityRepository cityRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final ModelMapper modelMapper;
+    UserRepository userRepository;
+    CityRepository cityRepository;
+    PasswordEncoder passwordEncoder;
+    ModelMapper modelMapper;
 
     @Override
     public Page<GetUserDTO> getAllUsers(Pageable pageable) {

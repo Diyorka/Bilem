@@ -5,14 +5,17 @@ import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.model.Mailing;
 import kg.bilem.repository.MailingRepository;
 import kg.bilem.service.MailingService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class MailingServiceImpl implements MailingService {
-    private final MailingRepository mailingRepository;
+    MailingRepository mailingRepository;
 
     @Override
     public ResponseEntity<String> addToMailingList(RequestMailingDTO mailingDTO) {

@@ -12,10 +12,13 @@ import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.Course;
 import kg.bilem.model.Mailing;
+import kg.bilem.model.Notification;
 import kg.bilem.model.User;
 import kg.bilem.repository.*;
 import kg.bilem.service.CourseService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,15 +34,39 @@ import static kg.bilem.dto.course.ResponseCourseDTO.toResponseCourseDTO;
 import static kg.bilem.dto.course.ResponseMainCourseDTO.toResponseMainCourseDTO;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
-    private final CourseRepository courseRepository;
-    private final UserRepository userRepository;
-    private final SubcategoryRepository subcategoryRepository;
-    private final CategoryRepository categoryRepository;
-    private final MailingRepository mailingRepository;
-    private final EmailServiceImpl emailService;
+    CourseRepository courseRepository;
+    ModuleRepository moduleRepository;
+    UserRepository userRepository;
+    SubcategoryRepository subcategoryRepository;
+    CategoryRepository categoryRepository;
+    MailingRepository mailingRepository;
+    EmailServiceImpl emailService;
+    NotificationRepository notificationRepository;
 
+    @Override
+    public ResponseEntity<String> sendCourseForChecking(Long courseId, User user) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"));
+
+        if(!user.getEmail().equals(course.getOwner().getEmail())){
+            throw new NoAccessException("Вы не имеете доступа к данному курсу");
+        }
+
+        if(!moduleRepository.existsByCourseId(courseId)){
+            return ResponseEntity.badRequest().body("Ваш курс не содержит модулей");
+        }
+
+        if(course.getStatus() == Status.CHECKING){
+            return ResponseEntity.badRequest().body("Курс уже не проверке");
+        }
+
+        course.setStatus(Status.CHECKING);
+        courseRepository.save(course);
+        return ResponseEntity.ok("Курс отправлен на проверку");
+    }
 
     @Override
     public ResponseCourseDTO createCourse(RequestCourseDTO courseDTO, User user) {
@@ -54,7 +80,7 @@ public class CourseServiceImpl implements CourseService {
         }
 
         Course course = buildCourse(courseDTO, user);
-        course.setStatus(Status.CHECKING);
+        course.setStatus(Status.NOT_READY);
 
         return toResponseCourseDTO(courseRepository.save(course));
     }
@@ -174,9 +200,19 @@ public class CourseServiceImpl implements CourseService {
         course.getSubcategory().getCategory().setCoursesCount(coursesCount + 1);
         categoryRepository.save(course.getSubcategory().getCategory());
 
+        sendNotification(course);
         sendMails();
 
         return ResponseEntity.ok("Курс успешно одобрен");
+    }
+
+    private void sendNotification(Course course) {
+        Notification notification = new Notification();
+        notification.setUser(course.getOwner());
+        notification.setHeader("Ваш курс одобрен!");
+        notification.setMessage("Ваш курс под названием " + course.getTitle() + " был одобрен!");
+        notification.setStatus(Status.ACTIVE);
+        notificationRepository.save(notification);
     }
 
     @Override
@@ -186,9 +222,22 @@ public class CourseServiceImpl implements CourseService {
         return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
     }
 
+    @Override
+    public Page<ResponseMainCourseDTO> getCoursesOfTeacher(Pageable pageable, User owner) {
+        Page<Course> courses = courseRepository.findAllByOwner(owner, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public Page<ResponseMainCourseDTO> getCoursesOfStudent(Pageable pageable, User student) {
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(student.getStudyingCourses().stream().toList());
+        return new PageImpl<>(courseDTOS, pageable, courseDTOS.size());
+    }
+
     private void sendMails() {
         List<Mailing> mailings = mailingRepository.findAll();
-        for(Mailing mailing:mailings){
+        for (Mailing mailing : mailings) {
             SimpleMailMessage activationEmail = new SimpleMailMessage();
             activationEmail.setFrom("bilem@gmail.com");
             activationEmail.setTo(mailing.getEmail());

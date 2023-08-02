@@ -10,7 +10,9 @@ import kg.bilem.model.User;
 import kg.bilem.repository.CourseRepository;
 import kg.bilem.repository.FavoriteRepository;
 import kg.bilem.service.FavoriteService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,10 +24,11 @@ import java.util.List;
 import static kg.bilem.dto.favorite.ResponseFavoriteDTO.toResponseFavoriteDTO;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class FavoriteServiceImpl implements FavoriteService {
-    private final FavoriteRepository favoriteRepository;
-    private final CourseRepository courseRepository;
+    FavoriteRepository favoriteRepository;
+    CourseRepository courseRepository;
 
     @Override
     public Page<ResponseFavoriteDTO> getAllFavoritesOfUser(Pageable pageable, User user) {
@@ -36,7 +39,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public ResponseEntity<String> addFavorite(RequestFavoriteDTO requestFavoriteDTO, User user) {
-        if(favoriteRepository.existsByCourseIdAndUserId(requestFavoriteDTO.getCourse_id(), user.getId())){
+        if (favoriteRepository.existsByCourseIdAndUserId(requestFavoriteDTO.getCourse_id(), user.getId())) {
             throw new AlreadyExistException("Курс уже находится в избранных");
         }
 
@@ -47,14 +50,14 @@ public class FavoriteServiceImpl implements FavoriteService {
                 .user(user)
                 .build()
         );
-        return  ResponseEntity.ok("Курс успешно добавлен в избранное");
+        return ResponseEntity.ok("Курс успешно добавлен в избранное");
     }
 
     @Override
     public ResponseEntity<String> deleteFavoriteById(Long id, User user) {
         Favorite favorite = favoriteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Избранное не найдено"));
-        if(!favorite.getUser().equals(user)){
+        if (!favorite.getUser().equals(user)) {
             throw new NoAccessException("У вас нет доступа к данному избранному");
         }
 

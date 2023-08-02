@@ -5,19 +5,23 @@ import kg.bilem.enums.Status;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.*;
+import kg.bilem.repository.NotificationRepository;
 import kg.bilem.repository.ReviewReplyRepository;
 import kg.bilem.repository.ReviewRepository;
 import kg.bilem.service.ReviewReplyService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class ReviewReplyServiceImpl implements ReviewReplyService {
-    private final ReviewRepository reviewRepository;
-
-    private final ReviewReplyRepository reviewReplyRepository;
+    ReviewRepository reviewRepository;
+    ReviewReplyRepository reviewReplyRepository;
+    NotificationRepository notificationRepository;
 
     @Override
     public ResponseEntity<String> addReviewReply(Long reviewId, RequestReviewReplyDTO reviewReplyDTO, User user) {
@@ -34,16 +38,6 @@ public class ReviewReplyServiceImpl implements ReviewReplyService {
         reviewReplyRepository.save(constructReviewReply(reviewReplyDTO, review, user));
 
         return ResponseEntity.ok("Ответ на отзыв успешно добавлен");
-    }
-
-    private void sendNotification(User user, RequestReviewReplyDTO reviewReplyDTO, Course course) {
-        Notification notification = new Notification();
-        notification.setUser(user);
-        notification.setHeader("Получен ответ на отзыв!");
-        notification.setMessage("Вы получили ответ на свой отзыв под курсом '" + course.getTitle() +
-                "'.\nТекст ответа: " + reviewReplyDTO.getText());
-        notification.setStatus(Status.ACTIVE);
-
     }
 
     @Override
@@ -76,6 +70,16 @@ public class ReviewReplyServiceImpl implements ReviewReplyService {
         reviewReplyRepository.save(reviewReply);
 
         return ResponseEntity.ok("Ответ на отзыв успешно удален");
+    }
+
+    private void sendNotification(User user, RequestReviewReplyDTO reviewReplyDTO, Course course) {
+        Notification notification = new Notification();
+        notification.setUser(user);
+        notification.setHeader("Получен ответ на отзыв!");
+        notification.setMessage("Вы получили ответ на свой отзыв под курсом '" + course.getTitle() +
+                "'.\nТекст ответа: " + reviewReplyDTO.getText());
+        notification.setStatus(Status.ACTIVE);
+        notificationRepository.save(notification);
     }
 
     private ReviewReply constructReviewReply(RequestReviewReplyDTO reviewReplyDTO, Review review, User user) {

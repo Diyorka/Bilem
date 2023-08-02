@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 public interface CourseService {
+    ResponseEntity<String> sendCourseForChecking(Long courseId, User user);
+
     ResponseCourseDTO createCourse(RequestCourseDTO courseDTO, User user);
 
     ResponseEntity<String> editCourse(Long courseId, RequestCourseDTO courseDTO, User user);
@@ -33,5 +35,7 @@ public interface CourseService {
 
     Page<ResponseMainCourseDTO> getCoursesOnChecking(Pageable pageable, User user);
 
+    Page<ResponseMainCourseDTO> getCoursesOfTeacher(Pageable pageable, User user);
 
+    Page<ResponseMainCourseDTO> getCoursesOfStudent(Pageable pageable, User user);
 }

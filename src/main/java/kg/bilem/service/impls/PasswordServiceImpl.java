@@ -9,7 +9,6 @@ import kg.bilem.model.User;
 import kg.bilem.repository.RecoveryTokenRepository;
 import kg.bilem.repository.UserRepository;
 import kg.bilem.service.PasswordService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,30 +39,69 @@ public class CourseController {
         return courseService.createCourse(courseDTO, user);
     }
 
+    @PostMapping("/{course_id}/send-for-checking")
+    @SecurityRequirement(name="JWT")
+    @Operation(
+            summary = "Отправка курса на проверку"
+    )
+    public ResponseEntity<String> sendCourseForChecking(@PathVariable Long course_id,
+                                                  @AuthenticationPrincipal User user){
+        return courseService.sendCourseForChecking(course_id, user);
+    }
+
     @PutMapping("/edit/{id}")
     @SecurityRequirement(name = "JWT")
     @Operation(
             summary = "Редактирование курса"
     )
-    public ResponseEntity<String> editCourse(@PathVariable Long id, 
+    public ResponseEntity<String> editCourse(@PathVariable Long id,
                                              @RequestBody RequestCourseDTO courseDTO,
-                                             @AuthenticationPrincipal User user){
+                                             @AuthenticationPrincipal User user) {
         return courseService.editCourse(id, courseDTO, user);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(
+            summary = "Получение курса по айди"
+    )
+    public ResponseCourseDTO getCourseById(@PathVariable Long id) {
+        return courseService.getCourseById(id);
     }
 
     @GetMapping("/all")
     @Operation(
             summary = "Получение всех курсов с основной информацией"
     )
-    public Page<ResponseMainCourseDTO> getAllCourses(@PageableDefault Pageable pageable){
+    public Page<ResponseMainCourseDTO> getAllCourses(@PageableDefault Pageable pageable) {
         return courseService.getAllCourses(pageable);
+    }
+
+    @GetMapping("/my-courses")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAnyAuthority('TEACHER', 'ADMIN')")
+    @Operation(
+            summary = "Получение курсов преподавателя"
+    )
+    public Page<ResponseMainCourseDTO> getCoursesOfTeacher(@PageableDefault Pageable pageable,
+                                                           @AuthenticationPrincipal User user){
+        return courseService.getCoursesOfTeacher(pageable, user);
+    }
+
+    @GetMapping("/my-studying-courses")
+    @SecurityRequirement(name = "JWT")
+    @Operation(
+            summary = "Получение курсов студента"
+    )
+    public Page<ResponseMainCourseDTO> getCoursesOfStudent(@PageableDefault Pageable pageable,
+                                                           @AuthenticationPrincipal User user){
+        return courseService.getCoursesOfStudent(pageable, user);
     }
 
     @GetMapping("/top")
     @Operation(
             summary = "Получение лучших курсов по количеству студентов"
     )
-    public Page<ResponseMainCourseDTO> getTopCourses(@PageableDefault Pageable pageable){
+    public Page<ResponseMainCourseDTO> getTopCourses(@PageableDefault Pageable pageable) {
         return courseService.getTopCourses(pageable);
     }
 
@@ -69,7 +109,7 @@ public class CourseController {
     @Operation(
             summary = "Получение всех новейших бесплатных курсов"
     )
-    public Page<ResponseMainCourseDTO> getNewestAndFreeCourses(@PageableDefault Pageable pageable){
+    public Page<ResponseMainCourseDTO> getNewestAndFreeCourses(@PageableDefault Pageable pageable) {
         return courseService.getNewestAndFreeCourses(pageable);
     }
 
@@ -77,7 +117,7 @@ public class CourseController {
     @Operation(
             summary = "Получение всех популярных бесплатных курсов"
     )
-    public Page<ResponseMainCourseDTO> getPopularAndFreeCourses(@PageableDefault Pageable pageable){
+    public Page<ResponseMainCourseDTO> getPopularAndFreeCourses(@PageableDefault Pageable pageable) {
         return courseService.getPopularAndFreeCourses(pageable);
     }
 
@@ -85,7 +125,7 @@ public class CourseController {
     @Operation(
             summary = "Получение всех новейших платных курсов"
     )
-    public Page<ResponseMainCourseDTO> getNewestAndPaidCourses(@PageableDefault Pageable pageable){
+    public Page<ResponseMainCourseDTO> getNewestAndPaidCourses(@PageableDefault Pageable pageable) {
         return courseService.getNewestAndPaidCourses(pageable);
     }
 
@@ -93,7 +133,7 @@ public class CourseController {
     @Operation(
             summary = "Получение всех популярных платных курсов"
     )
-    public Page<ResponseMainCourseDTO> getPopularAndPaidCourses(@PageableDefault Pageable pageable){
+    public Page<ResponseMainCourseDTO> getPopularAndPaidCourses(@PageableDefault Pageable pageable) {
         return courseService.getPopularAndPaidCourses(pageable);
     }
 
@@ -104,7 +144,7 @@ public class CourseController {
     public Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguageAndCourseType(@RequestParam(required = false) String query,
                                                                                               @RequestParam(required = false) String language,
                                                                                               @RequestParam(required = false) String courseType,
-                                                                                              @PageableDefault Pageable pageable){
+                                                                                              @PageableDefault Pageable pageable) {
         return courseService.getAllCoursesWithSearchByQueryAndLanguageAndCourseType(query, language, courseType, pageable);
     }
 

@@ -20,14 +20,17 @@ import static kg.bilem.dto.lesson.ResponseLessonDTO.toResponseLessonDTO;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ResponseModuleDTO {
+    Long id;
+
     String title;
 
-    ResponseCourseDTO courseDTO;
+    Long ordinalNumber;
 
     public static ResponseModuleDTO toResponseModuleDTO(Module module){
         return ResponseModuleDTO.builder()
+                .id(module.getId())
                 .title(module.getTitle())
-                .courseDTO(toResponseCourseDTO(module.getCourse()))
+                .ordinalNumber(module.getOrdinalNumber())
                 .build();
     }
 

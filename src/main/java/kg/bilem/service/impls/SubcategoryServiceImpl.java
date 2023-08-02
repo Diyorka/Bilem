@@ -9,7 +9,9 @@ import kg.bilem.model.Subcategory;
 import kg.bilem.repository.CategoryRepository;
 import kg.bilem.repository.SubcategoryRepository;
 import kg.bilem.service.SubcategoryService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +20,11 @@ import java.util.List;
 import static kg.bilem.dto.subcategory.ResponseSubcategoryDTO.toResponseSubcategoryDTO;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class SubcategoryServiceImpl implements SubcategoryService {
-    private final SubcategoryRepository subcategoryRepository;
-    private final CategoryRepository categoryRepository;
+    SubcategoryRepository subcategoryRepository;
+    CategoryRepository categoryRepository;
 
     @Override
     public List<ResponseSubcategoryDTO> getAllSubcategories() {

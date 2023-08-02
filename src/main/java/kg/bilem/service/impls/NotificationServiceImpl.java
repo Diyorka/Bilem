@@ -7,19 +7,21 @@ import kg.bilem.model.Notification;
 import kg.bilem.model.User;
 import kg.bilem.repository.NotificationRepository;
 import kg.bilem.service.NotificationService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static kg.bilem.dto.notification.ResponseNotificationDTO.toResponseNotificationDTO;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
-    private final NotificationRepository notificationRepository;
+    NotificationRepository notificationRepository;
 
     @Override
     public List<ResponseNotificationDTO> getAllNotificationsByUser(User user) {
