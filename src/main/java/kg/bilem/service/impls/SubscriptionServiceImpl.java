@@ -1,22 +1,19 @@
 package kg.bilem.service.impls;
 
-import kg.bilem.dto.course.ResponseMainCourseDTO;
 import kg.bilem.dto.subscription.ResponseSubscriberDTO;
 import kg.bilem.dto.subscription.ResponseSubscriptionDTO;
-import kg.bilem.dto.user.GetUserDTO;
-import kg.bilem.enums.CourseType;
 import kg.bilem.enums.Status;
 import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
-import kg.bilem.model.Course;
 import kg.bilem.model.Subscription;
 import kg.bilem.model.User;
-import kg.bilem.repository.SubcategoryRepository;
 import kg.bilem.repository.SubscriptionRepository;
 import kg.bilem.repository.UserRepository;
 import kg.bilem.service.SubscriptionService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,10 +27,11 @@ import static kg.bilem.dto.subscription.ResponseSubscriberDTO.toResponseSubscrib
 import static kg.bilem.dto.subscription.ResponseSubscriptionDTO.toResponseSubscriptionDTO;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
-    private final UserRepository userRepository;
-    private final SubscriptionRepository subscriptionRepository;
+    UserRepository userRepository;
+    SubscriptionRepository subscriptionRepository;
 
     @Override
     public ResponseEntity<String> subscribeUser(Long userId, User subscriber) {

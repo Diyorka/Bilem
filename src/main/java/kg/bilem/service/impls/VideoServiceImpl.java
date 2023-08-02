@@ -2,14 +2,14 @@ package kg.bilem.service.impls;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import kg.bilem.enums.CourseType;
 import kg.bilem.exception.FileEmptyException;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
-import kg.bilem.model.Course;
+import kg.bilem.model.Lesson;
 import kg.bilem.model.User;
-import kg.bilem.repository.CourseRepository;
-import kg.bilem.repository.UserRepository;
-import kg.bilem.service.ImageService;
+import kg.bilem.repository.LessonRepository;
+import kg.bilem.service.VideoService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,12 +26,11 @@ import java.util.Objects;
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-public class ImageServiceImpl implements ImageService {
-    UserRepository userRepository;
-    CourseRepository courseRepository;
+public class VideoServiceImpl implements VideoService {
+    LessonRepository lessonRepository;
 
     @Override
-    public String saveImage(MultipartFile file) throws IOException {
+    public String saveVideo(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new FileEmptyException("Файл пустой");
         }
@@ -50,30 +49,29 @@ public class ImageServiceImpl implements ImageService {
 
         Cloudinary cloudinary = new Cloudinary((urlKey));
 
-        Map upload = cloudinary.uploader().upload(saveFile, ObjectUtils.emptyMap());
+        Map upload = cloudinary.uploader().upload(saveFile, ObjectUtils.asMap("resource_type", "video"));
 
         return (String) upload.get("url");
     }
 
     @Override
-    public ResponseEntity<String> saveForUser(User user, MultipartFile file) throws IOException {
-        user.setImageUrl(saveImage(file));
-        userRepository.save(user);
-        return ResponseEntity.ok("Фотография сохранена");
-    }
+    public ResponseEntity<String> saveVideoForLesson(Long lessonId, String videoUrl, MultipartFile video, User user) throws IOException {
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new NotFoundException("Урок с таким айди не найден"));
 
-    @Override
-    public ResponseEntity<String> saveForCourse(Long courseId, MultipartFile file, User user) throws IOException {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new NotFoundException("Курс с айди " + courseId + " не найден"));
-
-        if(!user.getEmail().equals(course.getOwner().getEmail())){
-            throw new NoAccessException("У вас нет доступа на добавление изображения к данному курсу");
+        if(!user.getEmail().equals(lesson.getModule().getCourse().getOwner().getEmail())){
+            throw new NoAccessException("У вас нет доступа к изменению данного курса");
         }
 
-        course.setImageUrl(saveImage(file));
-        courseRepository.save(course);
+        if (lesson.getModule().getCourse().getCourseType() == CourseType.PAID) {
+            lesson.setVideoUrl(saveVideo(video));
+        } else if (videoUrl.isEmpty()) {
+            return ResponseEntity.badRequest().body("VideoUrl не должен быть пустым");
+        } else {
+            lesson.setVideoUrl(videoUrl);
+        }
 
-        return ResponseEntity.ok("Фотография курса успешно добавлена");
+        lessonRepository.save(lesson);
+        return ResponseEntity.ok("Видео успешно сохранено");
     }
 }

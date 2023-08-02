@@ -15,9 +15,10 @@ import kg.bilem.repository.RecoveryTokenRepository;
 import kg.bilem.repository.RefreshTokenRepository;
 import kg.bilem.repository.UserRepository;
 import kg.bilem.service.AuthenticationService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -35,15 +36,16 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
-    private final EmailServiceImpl emailService;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final RecoveryTokenRepository recoveryTokenRepository;
+    UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
+    JwtService jwtService;
+    AuthenticationManager authenticationManager;
+    EmailServiceImpl emailService;
+    RefreshTokenRepository refreshTokenRepository;
+    RecoveryTokenRepository recoveryTokenRepository;
 
     @Value(value = "${app.refreshExpirationInMs}")
     private long refreshExpirationInMs;

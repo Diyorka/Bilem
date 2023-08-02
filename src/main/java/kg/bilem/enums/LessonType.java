@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Getter
 public enum LessonType {
-    TEXT("Текстовый"), VIDEO("Видео"), TEST("Тест");
+    TEXT("Текст"), VIDEO("Видео"), TEST("Тест");
 
     private final String lessonType;
 

@@ -22,12 +22,12 @@ import static kg.bilem.dto.lesson.ResponseLessonDTO.toResponseLessonDTO;
 public class ResponseModuleDTO {
     String title;
 
-    ResponseCourseDTO courseDTO;
+    Long order;
 
     public static ResponseModuleDTO toResponseModuleDTO(Module module){
         return ResponseModuleDTO.builder()
                 .title(module.getTitle())
-                .courseDTO(toResponseCourseDTO(module.getCourse()))
+                .order(module.getOrder())
                 .build();
     }
 

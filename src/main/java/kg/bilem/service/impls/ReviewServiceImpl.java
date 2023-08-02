@@ -13,7 +13,9 @@ import kg.bilem.model.User;
 import kg.bilem.repository.CourseRepository;
 import kg.bilem.repository.ReviewRepository;
 import kg.bilem.service.ReviewService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,10 +28,11 @@ import java.util.List;
 import static kg.bilem.dto.review.ResponseReviewDTO.toResponseReviewDTO;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
-    private final ReviewRepository reviewRepository;
-    private final CourseRepository courseRepository;
+    ReviewRepository reviewRepository;
+    CourseRepository courseRepository;
 
     @Override
     public ResponseEntity<String> addReview(Long courseId,

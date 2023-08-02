@@ -8,16 +8,18 @@ import kg.bilem.model.*;
 import kg.bilem.repository.ReviewReplyRepository;
 import kg.bilem.repository.ReviewRepository;
 import kg.bilem.service.ReviewReplyService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class ReviewReplyServiceImpl implements ReviewReplyService {
-    private final ReviewRepository reviewRepository;
-
-    private final ReviewReplyRepository reviewReplyRepository;
+    ReviewRepository reviewRepository;
+    ReviewReplyRepository reviewReplyRepository;
 
     @Override
     public ResponseEntity<String> addReviewReply(Long reviewId, RequestReviewReplyDTO reviewReplyDTO, User user) {
