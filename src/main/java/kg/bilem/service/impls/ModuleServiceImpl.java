@@ -47,9 +47,13 @@ public class ModuleServiceImpl implements ModuleService {
             throw new AlreadyExistException("Модуль с таким названием уже существует");
         }
 
+        if(moduleRepository.existsByOrdinalNumberAndCourseId(moduleDTO.getOrdinalNumber(), course.getId())){
+            throw new AlreadyExistException("Модуль с таким порядковым номером уже существует");
+        }
+
         return toResponseModuleDTO(moduleRepository.save(Module.builder()
                 .course(course)
-                .order(moduleDTO.getOrder())
+                .ordinalNumber(moduleDTO.getOrdinalNumber())
                 .title(moduleDTO.getTitle())
                 .build())
         );
@@ -64,7 +68,7 @@ public class ModuleServiceImpl implements ModuleService {
             throw new NoAccessException("Вы не имеете доступа к данному модулю");
         }
 
-        module.setOrder(moduleDTO.getOrder());
+        module.setOrdinalNumber(moduleDTO.getOrdinalNumber());
         module.setTitle(moduleDTO.getTitle());
         moduleRepository.save(module);
 

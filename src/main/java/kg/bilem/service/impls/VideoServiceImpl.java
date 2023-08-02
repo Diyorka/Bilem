@@ -3,6 +3,7 @@ package kg.bilem.service.impls;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import kg.bilem.enums.CourseType;
+import kg.bilem.enums.LessonType;
 import kg.bilem.exception.FileEmptyException;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
@@ -63,9 +64,13 @@ public class VideoServiceImpl implements VideoService {
             throw new NoAccessException("У вас нет доступа к изменению данного курса");
         }
 
+        if(lesson.getLessonType() != LessonType.VIDEO){
+            throw new NoAccessException("Это не видеоурок");
+        }
+
         if (lesson.getModule().getCourse().getCourseType() == CourseType.PAID) {
             lesson.setVideoUrl(saveVideo(video));
-        } else if (videoUrl.isEmpty()) {
+        } else if (videoUrl == null) {
             return ResponseEntity.badRequest().body("VideoUrl не должен быть пустым");
         } else {
             lesson.setVideoUrl(videoUrl);

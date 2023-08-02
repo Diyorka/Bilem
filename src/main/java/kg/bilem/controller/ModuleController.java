@@ -61,7 +61,7 @@ public class ModuleController {
             summary = "Редактирование модуля"
     )
     public ResponseEntity<String> editModule(@PathVariable Long module_id,
-                                             @RequestBody RequestModuleDTO moduleDTO,
+                                             @RequestBody @Valid RequestModuleDTO moduleDTO,
                                              @AuthenticationPrincipal User user){
         return moduleService.editModule(module_id, moduleDTO, user);
     }
@@ -75,13 +75,4 @@ public class ModuleController {
                                                @AuthenticationPrincipal User user){
         return moduleService.deleteModule(module_id, user);
     }
-
-//    @PostMapping(value = "/add-video", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    @Operation(
-//            summary = "Добавление видео"
-//    )
-//    public ResponseEntity<String> uploadVideo(@RequestPart MultipartFile file) throws IOException {
-//        return videoService.saveVideoForLesson(file);
-//    }
-
 }

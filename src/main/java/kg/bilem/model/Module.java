@@ -18,7 +18,7 @@ import java.util.Set;
 public class Module extends BaseEntity{
     String title;
 
-    Long order;
+    Long ordinalNumber;
 
     @ManyToOne
     Course course;

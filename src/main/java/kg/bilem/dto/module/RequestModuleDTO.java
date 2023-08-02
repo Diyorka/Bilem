@@ -17,7 +17,7 @@ public class RequestModuleDTO {
     String title;
 
     @NotNull(message = "Порядковый номер модуля не может быть пустым")
-    Long order;
+    Long ordinalNumber;
 
     @NotNull(message = "Айди курса не может быть пустым")
     Long courseId;

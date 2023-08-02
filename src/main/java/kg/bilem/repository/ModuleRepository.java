@@ -11,4 +11,8 @@ public interface ModuleRepository extends JpaRepository<Module, Long> {
     boolean existsByTitleAndCourseId(String title, Long courseId);
 
     Page<Module> findAllByCourseId(Long courseId, Pageable pageable);
+
+    boolean existsByCourseId(Long courseId);
+
+    boolean existsByOrdinalNumberAndCourseId(Long ordinalNumber, Long id);
 }

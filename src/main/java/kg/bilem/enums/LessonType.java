@@ -17,6 +17,6 @@ public enum LessonType {
         return Stream.of(LessonType.values())
                 .filter(l -> l.getLessonType().equals(lessonType))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Тип курса не найден"));
+                .orElseThrow(() -> new NotFoundException("Тип урока не найден"));
     }
 }

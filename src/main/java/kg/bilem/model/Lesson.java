@@ -25,6 +25,8 @@ public class Lesson extends BaseEntity{
     @Enumerated(EnumType.STRING)
     LessonType lessonType;
 
+    Long ordinalNumber;
+
     String imageUrl;
 
     String videoUrl;
@@ -33,7 +35,7 @@ public class Lesson extends BaseEntity{
 
     String correctAnswer;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "lesson_incorrect_answers", joinColumns = @JoinColumn(name = "lesson_id"))
     List<String> incorrectAnswers = new ArrayList<>();
 

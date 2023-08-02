@@ -20,6 +20,9 @@ public class RequestLessonDTO {
 
     String content;
 
+    @NotNull(message = "Порядковый номер не может быть пустым")
+    Long ordinalNumber;
+
     @NotEmpty(message = "Тип урока не может быть пустым")
     String lessonType;
 

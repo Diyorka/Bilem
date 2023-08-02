@@ -3,6 +3,7 @@ package kg.bilem.service.impls;
 import kg.bilem.dto.lesson.RequestLessonDTO;
 import kg.bilem.dto.lesson.ResponseLessonDTO;
 import kg.bilem.enums.LessonType;
+import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.Lesson;
@@ -36,7 +37,7 @@ public class LessonServiceImpl implements LessonService {
         Module module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new NotFoundException("Модуль с таким айди не найден"));
 
-        if (!user.getStudyingCourses().contains(module.getCourse())) {
+        if (!user.getStudyingCourses().contains(module.getCourse()) && !user.getEmail().equals(module.getCourse().getOwner().getEmail())) {
             throw new NoAccessException("Вы не проходите данный курс");
         }
 
@@ -54,15 +55,24 @@ public class LessonServiceImpl implements LessonService {
             throw new NoAccessException("У вас нет доступа к созданию урока в данном курсе");
         }
 
+        if(lessonRepository.existsByTitleAndModuleId(lessonDTO.getTitle(), lessonDTO.getModuleId())){
+            throw new AlreadyExistException("Урок с таким названием уже существует");
+        }
+
+        if(lessonRepository.existsByOrdinalNumberAndModuleId(lessonDTO.getOrdinalNumber(), lessonDTO.getModuleId())){
+            throw new AlreadyExistException("Урок с таким порядковым номером уже существует");
+        }
+
         Lesson lesson = Lesson.builder()
                 .title(lessonDTO.getTitle())
                 .module(module)
+                .ordinalNumber(lessonDTO.getOrdinalNumber())
                 .lessonType(LessonType.of(lessonDTO.getLessonType()))
-                .content(lessonDTO.getLessonType().equals("TEXT") ? lessonDTO.getContent() : null)
-                .imageUrl(lessonDTO.getLessonType().equals("TEXT") ? lessonDTO.getImageUrl() : null)
-                .correctAnswer(lessonDTO.getLessonType().equals("TEST") ? lessonDTO.getCorrectAnswer() : null)
-                .question(lessonDTO.getLessonType().equals("TEST") ? lessonDTO.getQuestion() : null)
-                .incorrectAnswers(lessonDTO.getLessonType().equals("TEST") ? lessonDTO.getIncorrectAnswers() : null)
+                .content(lessonDTO.getLessonType().equals("Текст") ? lessonDTO.getContent() : null)
+                .imageUrl(lessonDTO.getLessonType().equals("Текст") ? lessonDTO.getImageUrl() : null)
+                .correctAnswer(lessonDTO.getLessonType().equals("Тест") ? lessonDTO.getCorrectAnswer() : null)
+                .question(lessonDTO.getLessonType().equals("Тест") ? lessonDTO.getQuestion() : null)
+                .incorrectAnswers(lessonDTO.getLessonType().equals("Тест") ? lessonDTO.getIncorrectAnswers() : null)
                 .build();
 
         return toResponseLessonDTO(lessonRepository.save(lesson));

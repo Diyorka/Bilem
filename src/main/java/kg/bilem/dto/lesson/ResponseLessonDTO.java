@@ -27,6 +27,8 @@ public class ResponseLessonDTO {
 
     String content;
 
+    Long ordinalNumber;
+
     String imageUrl;
 
     String videoUrl;
@@ -44,6 +46,7 @@ public class ResponseLessonDTO {
                 .id(lesson.getId())
                 .title(lesson.getTitle())
                 .content(lesson.getContent())
+                .ordinalNumber(lesson.getOrdinalNumber())
                 .imageUrl(lesson.getImageUrl())
                 .videoUrl(lesson.getVideoUrl())
                 .lessonType(lesson.getLessonType().name())

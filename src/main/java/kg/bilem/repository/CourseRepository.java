@@ -4,6 +4,7 @@ import kg.bilem.enums.CourseType;
 import kg.bilem.enums.Language;
 import kg.bilem.enums.Status;
 import kg.bilem.model.Course;
+import kg.bilem.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,4 +38,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     Page<Course> findAllByStatusAndTitleContainsIgnoreCaseAndCourseType(Status active, String query, CourseType courseType, Pageable pageable);
 
     Page<Course> findAllByStatusAndLanguage(Status active, Language language, Pageable pageable);
+
+    Page<Course> findAllByOwner(User owner, Pageable pageable);
+
+    Page<Course> findAllByStudentsContains(User student, Pageable pageable);
 }
