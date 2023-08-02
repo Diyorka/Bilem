@@ -96,7 +96,7 @@ public class ModuleServiceImpl implements ModuleService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"));
 
-        if(user.getStudyingCourses().contains(course)) {
+        if(course.getStudents().contains(user)) {
             throw new NoAccessException("Вы не проходите данный курс");
         }
 

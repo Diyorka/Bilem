@@ -231,8 +231,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Page<ResponseMainCourseDTO> getCoursesOfStudent(Pageable pageable, User student) {
-        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(student.getStudyingCourses().stream().toList());
-        return new PageImpl<>(courseDTOS, pageable, courseDTOS.size());
+        Page<Course> courses = courseRepository.findAllByStudentsContains(student, pageable);
+        List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
+        return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
     }
 
     private void sendMails() {
