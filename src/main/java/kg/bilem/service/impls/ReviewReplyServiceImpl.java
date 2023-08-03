@@ -26,7 +26,6 @@ public class ReviewReplyServiceImpl implements ReviewReplyService {
     @Override
     public ResponseEntity<String> addReviewReply(Long reviewId, RequestReviewReplyDTO reviewReplyDTO, User user) {
         Review review = reviewRepository.findById(reviewId)
-                .filter(r -> r.getStatus() == Status.ACTIVE)
                 .orElseThrow(() -> new NotFoundException("Отзыв с данным айди не найден"));
 
         Course course = review.getCourse();
@@ -43,7 +42,6 @@ public class ReviewReplyServiceImpl implements ReviewReplyService {
     @Override
     public ResponseEntity<String> editReviewReply(Long reviewReplyId, RequestReviewReplyDTO reviewReplyDTO, User user) {
         ReviewReply reviewReply = reviewReplyRepository.findById(reviewReplyId)
-                .filter(r -> r.getStatus() == Status.ACTIVE)
                 .orElseThrow(() -> new NotFoundException("Ответ на отзыв с таким айди не найден"));
 
         if(!user.getEmail().equals(reviewReply.getUser().getEmail())){
@@ -59,16 +57,13 @@ public class ReviewReplyServiceImpl implements ReviewReplyService {
     @Override
     public ResponseEntity<String> deleteReviewReply(Long reviewReplyId, User user) {
         ReviewReply reviewReply = reviewReplyRepository.findById(reviewReplyId)
-                .filter(r -> r.getStatus() == Status.ACTIVE)
                 .orElseThrow(() -> new NotFoundException("Ответ на отзыв с таким айди не найден"));
 
         if(!user.getEmail().equals(reviewReply.getUser().getEmail())){
             throw new NoAccessException("У вас нет доступа на редактирование данного ответа");
         }
 
-        reviewReply.setStatus(Status.DELETED);
-        reviewReplyRepository.save(reviewReply);
-
+        reviewReplyRepository.delete(reviewReply);
         return ResponseEntity.ok("Ответ на отзыв успешно удален");
     }
 
@@ -87,7 +82,6 @@ public class ReviewReplyServiceImpl implements ReviewReplyService {
                 .text(reviewReplyDTO.getText())
                 .review(review)
                 .user(user)
-                .status(Status.ACTIVE)
                 .build();
     }
 }

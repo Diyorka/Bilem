@@ -16,7 +16,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +36,6 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     CityRepository cityRepository;
     PasswordEncoder passwordEncoder;
-    ModelMapper modelMapper;
 
     @Override
     public Page<GetUserDTO> getAllUsers(Pageable pageable) {
@@ -72,15 +70,8 @@ public class UserServiceImpl implements UserService {
         if (!userDto.getEmail().equals(user.getEmail()) && userRepository.existsByEmail(userDto.getEmail())) {
             throw new AlreadyExistException("Пользователь с такой почтой уже зарегистрирован");
         }
-        if(!cityRepository.existsById(userDto.getCityId())){
-            throw new NotFoundException("Город с айди " + userDto.getCityId() + " не найден");
-        }
 
-        Long id = user.getId();
-        modelMapper.getConfiguration().setSkipNullEnabled(false);
-        modelMapper.map(userDto, user);
-        user.setId(id);
-
+        buildUser(user, userDto);
         return toGetUserDto(userRepository.save(user));
     }
 
@@ -112,4 +103,20 @@ public class UserServiceImpl implements UserService {
         return toGetUserDto(user);
     }
 
+    private void buildUser(User user, UpdateUserDTO userDto) {
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        user.setAbout_me(userDto.getAbout_me());
+        user.setActivity_sphere(userDto.getActivity_sphere());
+        user.setProfile_description(userDto.getProfile_description());
+        user.setCity(cityRepository.findById(userDto.getCityId()).orElseThrow(() -> new NotFoundException("Город с айди " + userDto.getCityId() + " не найден")));
+        user.setWorkPlace(userDto.getWork_place());
+        user.setInstagram(userDto.getInstagram());
+        user.setGithub(userDto.getGithub());
+        user.setBehance(userDto.getBehance());
+        user.setTwitter(userDto.getTwitter());
+        user.setYoutube(userDto.getYoutube());
+        user.setTelegram(userDto.getTelegram());
+        user.setDribble(userDto.getDribble());
+    }
 }
