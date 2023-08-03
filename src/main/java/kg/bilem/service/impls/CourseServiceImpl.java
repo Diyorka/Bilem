@@ -47,6 +47,26 @@ public class CourseServiceImpl implements CourseService {
     NotificationRepository notificationRepository;
 
     @Override
+    public ResponseEntity<String> signUpForCourse(Long courseId, User user) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"));
+
+        if(course.getStudents().contains(user)){
+            throw new AlreadyExistException("Вы уже записаны на данный курс");
+        }
+
+        if(course.getCourseType() == CourseType.FREE){
+            course.getStudents().add(user);
+            courseRepository.save(course);
+            return ResponseEntity.ok("Вы успешно записались на курс");
+        }
+
+        //TODO реализовать покупку курса
+
+        return ResponseEntity.ok("Вы успешно купили курс");
+    }
+
+    @Override
     public ResponseEntity<String> sendCourseForChecking(Long courseId, User user) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"));

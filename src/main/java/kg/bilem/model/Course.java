@@ -58,7 +58,12 @@ public class Course extends BaseEntity{
     )
     Set<User> teachers;
 
-    @ManyToMany(mappedBy = "studyingCourses", fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "student_course",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     Set<User> students;
 
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)

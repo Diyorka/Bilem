@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 public interface CourseService {
+    ResponseEntity<String> signUpForCourse(Long courseId, User user);
+
     ResponseEntity<String> sendCourseForChecking(Long courseId, User user);
 
     ResponseCourseDTO createCourse(RequestCourseDTO courseDTO, User user);

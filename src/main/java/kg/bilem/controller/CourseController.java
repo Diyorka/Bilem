@@ -39,6 +39,16 @@ public class CourseController {
         return courseService.createCourse(courseDTO, user);
     }
 
+    @PostMapping("/{course_id}/sign-up")
+    @SecurityRequirement(name = "JWT")
+    @Operation(
+            summary = "Записаться или купить курс"
+    )
+    public ResponseEntity<String> signUpForCourse(@PathVariable Long course_id,
+                                                  @AuthenticationPrincipal User user){
+        return courseService.signUpForCourse(course_id, user);
+    }
+
     @PostMapping("/{course_id}/send-for-checking")
     @SecurityRequirement(name="JWT")
     @Operation(
