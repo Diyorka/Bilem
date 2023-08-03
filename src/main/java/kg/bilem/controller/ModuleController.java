@@ -11,7 +11,9 @@ import kg.bilem.dto.module.ResponseModuleDTO;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.ModuleServiceImpl;
 import kg.bilem.service.impls.VideoServiceImpl;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -25,6 +27,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/module")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
@@ -32,7 +35,7 @@ import java.io.IOException;
         description = "В этом контроллере есть возможность получения, добавления и изменения модулей"
 )
 public class ModuleController {
-    private final ModuleServiceImpl moduleService;
+    ModuleServiceImpl moduleService;
 
     @GetMapping("/{course_id}/all")
     @SecurityRequirement(name = "JWT")
