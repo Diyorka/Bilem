@@ -43,7 +43,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(length = 500)
     String profile_description;
 
-    String activitySphere;
+    String activity_sphere;
 
     @ManyToOne
     City city;
@@ -67,12 +67,7 @@ public class User extends BaseEntity implements UserDetails {
     @ManyToMany(mappedBy = "teachers")
     Set<Course> teachingCourses;
 
-    @ManyToMany()
-    @JoinTable(
-            name = "student_course",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
+    @ManyToMany(mappedBy = "students")
     Set<Course> studyingCourses;
 
     @Override

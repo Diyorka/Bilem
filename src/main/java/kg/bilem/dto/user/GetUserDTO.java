@@ -57,7 +57,7 @@ public class GetUserDTO {
                 .imageUrl(user.getImageUrl())
                 .about_me(user.getAbout_me())
                 .profile_description(user.getProfile_description())
-                .activity_sphere(user.getActivitySphere())
+                .activity_sphere(user.getActivity_sphere())
                 .city(user.getCity() == null ? null : user.getCity().getName())
                 .work_place(user.getWorkPlace())
                 .instagram(user.getInstagram())
