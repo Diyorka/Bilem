@@ -8,7 +8,9 @@ import kg.bilem.dto.review.RequestReviewDTO;
 import kg.bilem.dto.review.ResponseReviewDTO;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.ReviewServiceImpl;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,14 +20,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/review")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
-        name = "Контроллер для работы с отзывами",
+        name = "Контроллер для работы с отзывами к курсам",
         description = "В этом контроллере есть возможность получения, добавления, изменения и удаления отзывов"
 )
 public class ReviewController {
-    private final ReviewServiceImpl reviewService;
+    ReviewServiceImpl reviewService;
 
     @PostMapping("/add/{courseId}")
     @SecurityRequirement(name = "JWT")

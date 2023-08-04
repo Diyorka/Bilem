@@ -7,7 +7,10 @@ import kg.bilem.dto.subscription.ResponseSubscriberDTO;
 import kg.bilem.dto.subscription.ResponseSubscriptionDTO;
 import kg.bilem.model.User;
 import kg.bilem.service.SubscriptionService;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -17,14 +20,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/subscription")
-@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
         name = "Контроллер для работы с подписками",
         description = "В этом контроллере есть возможность получения, добавления и удаления подписок"
 )
 public class SubscriptionController {
-    private final SubscriptionService subscriptionService;
+    SubscriptionService subscriptionService;
 
     @GetMapping("/my-subscriptions")
     @SecurityRequirement(name = "JWT")

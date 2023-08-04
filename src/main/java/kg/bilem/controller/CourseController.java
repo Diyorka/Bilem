@@ -9,7 +9,9 @@ import kg.bilem.dto.course.ResponseCourseDTO;
 import kg.bilem.dto.course.ResponseMainCourseDTO;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.CourseServiceImpl;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/course")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
@@ -27,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
         description = "В этом контроллере есть возможность получения, добавления и изменения курсов"
 )
 public class CourseController {
-    private final CourseServiceImpl courseService;
+    CourseServiceImpl courseService;
 
     @PostMapping("/add")
     @SecurityRequirement(name = "JWT")

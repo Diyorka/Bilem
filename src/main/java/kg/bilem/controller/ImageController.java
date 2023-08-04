@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.ImageServiceImpl;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +19,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/image")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
@@ -24,7 +27,7 @@ import java.io.IOException;
         description = "В этом контроллеры есть возможности добавления фото"
 )
 public class ImageController {
-    private final ImageServiceImpl imageService;
+    ImageServiceImpl imageService;
 
     @PostMapping(value = "/upload/myAvatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @SecurityRequirement(name = "JWT")

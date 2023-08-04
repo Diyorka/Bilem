@@ -37,7 +37,4 @@ public class Review extends BaseEntity{
 
     @ManyToOne
     User user;
-
-    @Enumerated(EnumType.STRING)
-    Status status;
 }

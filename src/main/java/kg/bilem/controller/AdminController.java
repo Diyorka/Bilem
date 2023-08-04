@@ -11,7 +11,10 @@ import kg.bilem.model.Course;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.CourseServiceImpl;
 import kg.bilem.service.impls.UserServiceImpl;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -22,14 +25,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin")
-@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
         name = "Контроллер для работы админа"
 )
 public class AdminController {
-    private final CourseServiceImpl courseService;
-    private final UserServiceImpl userService;
+    CourseServiceImpl courseService;
+    UserServiceImpl userService;
 
     @GetMapping("/all")
     @SecurityRequirement(name = "JWT")
