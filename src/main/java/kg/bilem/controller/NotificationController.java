@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.bilem.dto.notification.ResponseNotificationDTO;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.NotificationServiceImpl;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/notification")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
@@ -22,7 +25,7 @@ import java.util.List;
         description = "В этом контроллере есть возможность получения и удаления модулей"
 )
 public class NotificationController {
-    private final NotificationServiceImpl notificationServiceImpl;
+    NotificationServiceImpl notificationServiceImpl;
 
     @GetMapping("/all")
     @SecurityRequirement(name = "JWT")

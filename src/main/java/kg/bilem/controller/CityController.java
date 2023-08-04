@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import kg.bilem.dto.city.RequestCityDTO;
 import kg.bilem.dto.city.ResponseCityDTO;
 import kg.bilem.service.impls.CityServiceImpl;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/city")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
@@ -23,7 +26,7 @@ import java.util.List;
         description = "В этом контроллере есть возможность получения, добавления и изменения городов"
 )
 public class CityController {
-    private final CityServiceImpl cityService;
+    CityServiceImpl cityService;
 
     @GetMapping("/all")
     @Operation(

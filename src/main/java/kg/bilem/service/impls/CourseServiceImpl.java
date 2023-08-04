@@ -230,7 +230,7 @@ public class CourseServiceImpl implements CourseService {
         Notification notification = new Notification();
         notification.setUser(course.getOwner());
         notification.setHeader("Ваш курс одобрен!");
-        notification.setMessage("Ваш курс под названием " + course.getTitle() + " был одобрен!");
+        notification.setMessage("Ваш курс под названием '" + course.getTitle() + "' был одобрен!");
         notification.setStatus(Status.ACTIVE);
         notificationRepository.save(notification);
     }

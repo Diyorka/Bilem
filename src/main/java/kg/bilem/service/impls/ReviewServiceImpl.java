@@ -7,10 +7,9 @@ import kg.bilem.enums.Status;
 import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
-import kg.bilem.model.Course;
-import kg.bilem.model.Review;
-import kg.bilem.model.User;
+import kg.bilem.model.*;
 import kg.bilem.repository.CourseRepository;
+import kg.bilem.repository.ReviewReplyRepository;
 import kg.bilem.repository.ReviewRepository;
 import kg.bilem.service.ReviewService;
 import lombok.AccessLevel;
@@ -33,6 +32,7 @@ import static kg.bilem.dto.review.ResponseReviewDTO.toResponseReviewDTO;
 public class ReviewServiceImpl implements ReviewService {
     ReviewRepository reviewRepository;
     CourseRepository courseRepository;
+    ReviewReplyRepository reviewReplyRepository;
 
     @Override
     public ResponseEntity<String> addReview(Long courseId,
@@ -75,8 +75,9 @@ public class ReviewServiceImpl implements ReviewService {
             throw new NoAccessException("У вас нет прав на удаление данного отзыва");
         }
 
-        review.setStatus(Status.DELETED);
-        reviewRepository.save(review);
+        List<ReviewReply> reviewReplies = reviewReplyRepository.findAllByReviewId(reviewId);
+        reviewReplyRepository.deleteAll(reviewReplies);
+        reviewRepository.delete(review);
 
         return ResponseEntity.ok("Отзыв успешно удален");
     }
@@ -84,9 +85,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Page<ResponseReviewDTO> getReviewsByCourseId(Long courseId, Pageable pageable) {
-        Page<Review> reviews = reviewRepository.findAllByCourseIdAndStatus(courseId, Status.ACTIVE, pageable);
+        Page<Review> reviews = reviewRepository.findAllByCourseId(courseId, pageable);
         List<ResponseReviewDTO> reviewDTOS = toResponseReviewDTO(reviews.toSet());
-
         return new PageImpl<>(reviewDTOS, pageable, reviews.getTotalElements());
     }
 
@@ -96,7 +96,6 @@ public class ReviewServiceImpl implements ReviewService {
                 .text(requestReviewDTO.getText())
                 .course(course)
                 .user(user)
-                .status(Status.ACTIVE)
                 .build();
     }
 

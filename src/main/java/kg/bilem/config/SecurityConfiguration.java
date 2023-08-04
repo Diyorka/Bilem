@@ -37,7 +37,9 @@ public class SecurityConfiguration {
             "/api/review-reply/**",
             "/api/notification/**",
             "/api/subscription/**",
-            "/api/mailing/**"
+            "/api/mailing/**",
+            "/api/comment/**",
+            "/api/comment-reply/**"
     };
 
     @Bean

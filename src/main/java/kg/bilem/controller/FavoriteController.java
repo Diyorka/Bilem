@@ -8,7 +8,10 @@ import kg.bilem.dto.favorite.RequestFavoriteDTO;
 import kg.bilem.dto.favorite.ResponseFavoriteDTO;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.FavoriteServiceImpl;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,14 +21,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/favorite")
-@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
         name = "Контроллер для работы с избранными",
         description = "В этом контроллере есть возможность получения, добавления и удаления избранных курсов"
 )
 public class FavoriteController {
-    private final FavoriteServiceImpl favoriteService;
+    FavoriteServiceImpl favoriteService;
 
     @PostMapping("/add")
     @SecurityRequirement(name = "JWT")
