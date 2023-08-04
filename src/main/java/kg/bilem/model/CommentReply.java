@@ -1,23 +1,24 @@
 package kg.bilem.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
-@Table(name = "comment")
+@Table(name = "comment_reply")
 @Getter
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Comment extends BaseEntity {
+public class CommentReply extends BaseEntity{
     String text;
 
     @CreationTimestamp
@@ -26,12 +27,9 @@ public class Comment extends BaseEntity {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "comment", fetch = FetchType.EAGER)
-    Set<CommentReply> commentReplies;
-
-    @ManyToOne
-    Lesson lesson;
-
     @ManyToOne
     User user;
+
+    @ManyToOne
+    Comment comment;
 }
