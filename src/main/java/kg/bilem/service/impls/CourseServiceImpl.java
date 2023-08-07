@@ -127,6 +127,36 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public ResponseEntity<String> archiveCourse(Long courseId, User user) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new NotFoundException("Курс с айди " + courseId + " не найден"));
+
+        if (user.getRole() != Role.ADMIN || !user.getEmail().equals(course.getOwner().getEmail())) {
+            return ResponseEntity.badRequest().body("Вы не имеете права на редактирование данного курса");
+        }
+
+        course.setStatus(Status.ARCHIVED);
+        courseRepository.save(course);
+
+        return ResponseEntity.ok("Статус курса изменен");
+    }
+
+    @Override
+    public ResponseEntity<String> deleteCourse(Long courseId, User user) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new NotFoundException("Курс с айди " + courseId + " не найден"));
+
+        if (user.getRole() != Role.ADMIN || !user.getEmail().equals(course.getOwner().getEmail())) {
+            return ResponseEntity.badRequest().body("Вы не имеете права на редактирование данного курса");
+        }
+
+        course.setStatus(Status.DELETED);
+        courseRepository.save(course);
+
+        return ResponseEntity.ok("Курс удален");
+    }
+
+    @Override
     public ResponseCourseDTO getCourseById(Long courseId) {
         return toResponseCourseDTO(courseRepository.findById(courseId)
                 .filter(course -> course.getStatus() == Status.ACTIVE)
@@ -211,7 +241,7 @@ public class CourseServiceImpl implements CourseService {
 
         Course course = courseRepository.findById(courseId)
                 .filter(c -> c.getStatus() == Status.CHECKING)
-                .orElseThrow(() -> new NotFoundException("Курс не существует либо уже активен"));
+                .orElseThrow(() -> new NotFoundException("Курс не на проверке"));
 
         course.setStatus(Status.ACTIVE);
         courseRepository.save(course);
@@ -220,17 +250,40 @@ public class CourseServiceImpl implements CourseService {
         course.getSubcategory().getCategory().setCoursesCount(coursesCount + 1);
         categoryRepository.save(course.getSubcategory().getCategory());
 
-        sendNotification(course);
+        String header = "Ваш курс одобрен!";
+        String message = "Ваш курс под названием '" + course.getTitle() + "' был одобрен!";
+        sendNotification(course, header, message);
         sendMails();
 
         return ResponseEntity.ok("Курс успешно одобрен");
     }
 
-    private void sendNotification(Course course) {
+    @Override
+    public ResponseEntity<String> rejectCourse(Long courseId, String reason, User user) {
+        if (user.getRole() != Role.ADMIN) {
+            throw new NoAccessException("У вас нет доступа на отклонение курсов");
+        }
+
+        Course course = courseRepository.findById(courseId)
+                .filter(c -> c.getStatus() == Status.CHECKING)
+                .orElseThrow(() -> new NotFoundException("Курс не на проверке"));
+
+        course.setStatus(Status.NOT_READY);
+        courseRepository.save(course);
+
+        String header = "Ваш курс отклонен";
+        String message = "Ваш курс под названием '" + course.getTitle() + "' был отклонен";
+        sendNotification(course, header, message);
+        sendMails();
+
+        return ResponseEntity.ok("Курс успешно отклонен");
+    }
+
+    private void sendNotification(Course course, String header, String message) {
         Notification notification = new Notification();
         notification.setUser(course.getOwner());
-        notification.setHeader("Ваш курс одобрен!");
-        notification.setMessage("Ваш курс под названием '" + course.getTitle() + "' был одобрен!");
+        notification.setHeader(header);
+        notification.setMessage(message);
         notification.setStatus(Status.ACTIVE);
         notificationRepository.save(notification);
     }
@@ -244,7 +297,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Page<ResponseMainCourseDTO> getCoursesOfTeacher(Pageable pageable, User owner) {
-        Page<Course> courses = courseRepository.findAllByOwner(owner, pageable);
+        Page<Course> courses = courseRepository.findAllByOwnerAndStatusIsNot(owner, Status.DELETED, pageable);
         List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
         return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
     }
