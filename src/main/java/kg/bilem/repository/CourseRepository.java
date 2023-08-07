@@ -9,10 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    Page<Course> findAllBySubcategoryId(Long id, Pageable pageable);
-
     boolean existsByTitle(String title);
 
     Course findByTitle(String titleOfCourse);
@@ -39,7 +39,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     Page<Course> findAllByStatusAndLanguage(Status active, Language language, Pageable pageable);
 
-    Page<Course> findAllByOwner(User owner, Pageable pageable);
+    Page<Course> findAllByOwnerAndStatusIsNot(User owner, Status status, Pageable pageable);
 
     Page<Course> findAllByStudentsContains(User student, Pageable pageable);
 }

@@ -5,6 +5,7 @@ import kg.bilem.dto.user.AuthUserDTO;
 import kg.bilem.dto.user.CreateUserDTO;
 import kg.bilem.enums.Role;
 import kg.bilem.enums.Status;
+import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.exception.TokenNotValidException;
 import kg.bilem.exception.UserAlreadyExistException;
@@ -74,14 +75,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse authenticate(AuthUserDTO request) {
+        var user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new NotFoundException("Пользователь с такой почтой не найден"));
+
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+            throw new NoAccessException("Вы ввели неверный пароль");
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow();
+
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = generateRefreshToken(user);
         if (refreshTokenRepository.existsByUser(user)) {

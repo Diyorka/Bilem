@@ -97,6 +97,18 @@ public class AdminController {
         return courseService.approveCourse(courseId, user);
     }
 
+    @PutMapping("/reject-course/{courseId}")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(
+            summary = "Отклонить курс с причиной"
+    )
+    public ResponseEntity<String> rejectCourse(@PathVariable Long courseId,
+                                                @RequestParam String reason,
+                                                @AuthenticationPrincipal User user){
+        return courseService.rejectCourse(courseId, reason, user);
+    }
+
     @PostMapping("/addAdmin")
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("hasAuthority('ADMIN')")

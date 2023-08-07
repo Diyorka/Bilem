@@ -73,6 +73,27 @@ public class CourseController {
         return courseService.editCourse(id, courseDTO, user);
     }
 
+    @PutMapping("/archive/{id}")
+    @SecurityRequirement(name = "JWT")
+    @Operation(
+            summary = "Добавить курс в архив"
+    )
+    public ResponseEntity<String> archiveCourse(@PathVariable Long id,
+                                             @AuthenticationPrincipal User user) {
+        return courseService.archiveCourse(id, user);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @SecurityRequirement(name = "JWT")
+    @Operation(
+            summary = "Удалить курс"
+    )
+    public ResponseEntity<String> deleteCourse(@PathVariable Long id,
+                                                @AuthenticationPrincipal User user) {
+        return courseService.deleteCourse(id, user);
+    }
+
+
     @GetMapping("/{id}")
     @Operation(
             summary = "Получение курса по айди"

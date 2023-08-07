@@ -17,6 +17,10 @@ public interface CourseService {
 
     ResponseEntity<String> editCourse(Long courseId, RequestCourseDTO courseDTO, User user);
 
+    ResponseEntity<String> archiveCourse(Long courseId, User user);
+
+    ResponseEntity<String> deleteCourse(Long courseId, User user);
+
     ResponseCourseDTO getCourseById(Long courseId);
 
     Page<ResponseMainCourseDTO> getAllCourses(Pageable pageable);
@@ -34,6 +38,8 @@ public interface CourseService {
     Page<ResponseMainCourseDTO> getAllCoursesWithSearchByQueryAndLanguageAndCourseType(String query, String language, String courseType, Pageable pageable);
 
     ResponseEntity<String> approveCourse(Long courseId, User user);
+
+    ResponseEntity<String> rejectCourse(Long courseId, String reason, User user);
 
     Page<ResponseMainCourseDTO> getCoursesOnChecking(Pageable pageable, User user);
 
