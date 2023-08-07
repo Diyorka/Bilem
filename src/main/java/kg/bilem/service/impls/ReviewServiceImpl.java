@@ -12,6 +12,7 @@ import kg.bilem.repository.CourseRepository;
 import kg.bilem.repository.ReviewReplyRepository;
 import kg.bilem.repository.ReviewRepository;
 import kg.bilem.service.ReviewService;
+import kg.bilem.service.StudentProgressService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -33,6 +34,7 @@ public class ReviewServiceImpl implements ReviewService {
     ReviewRepository reviewRepository;
     CourseRepository courseRepository;
     ReviewReplyRepository reviewReplyRepository;
+    StudentProgressService studentProgressService;
 
     @Override
     public ResponseEntity<String> addReview(Long courseId,
@@ -44,6 +46,11 @@ public class ReviewServiceImpl implements ReviewService {
 
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с данным айди не найден"));
+
+        if(studentProgressService.getStudentProgressPercentageOnCourse(courseId, user) < 70){
+            throw new NoAccessException("Вы должны пройти 70% курса, чтобы оставить отзыв");
+        }
+
         reviewRepository.save(constructReview(reviewDTO, user, course));
         updateCourseAverageScore(course);
 
