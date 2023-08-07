@@ -41,7 +41,18 @@ public class StudentProgressController {
             summary = "Указать урок как завершенный"
     )
     public ResponseEntity<String> completeLesson(@PathVariable Long lesson_id,
+                                                 @RequestParam(required = false) String testAnswer,
                                                  @AuthenticationPrincipal User user){
-        return studentProgressService.completeLesson(lesson_id, user);
+        return studentProgressService.completeLesson(lesson_id, testAnswer, user);
+    }
+
+    @GetMapping("/{courseId}")
+    @SecurityRequirement(name = "JWT")
+    @Operation(
+            summary = "Получить процент прогресса студента на курсе"
+    )
+    public Integer getStudentProgressPercentageOnCourse(@PathVariable Long courseId,
+                                              @AuthenticationPrincipal User user){
+        return studentProgressService.getStudentProgressPercentageOnCourse(courseId, user);
     }
 }
