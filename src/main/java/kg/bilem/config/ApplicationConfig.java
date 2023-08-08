@@ -3,7 +3,7 @@ package kg.bilem.config;
 
 import kg.bilem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,7 +45,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ModelMapper modelMapper(){
-        return new ModelMapper();
+    public OkHttpClient okHttpClient(){
+        return new OkHttpClient();
     }
 }
