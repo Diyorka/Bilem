@@ -7,7 +7,9 @@ import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.Category;
 import kg.bilem.repository.CategoryRepository;
 import kg.bilem.service.CategoryService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +18,19 @@ import java.util.List;
 import static kg.bilem.dto.category.ResponseCategoryDTO.toResponseCategoryDTO;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
-    private final CategoryRepository categoryRepository;
+    CategoryRepository categoryRepository;
 
     @Override
     public List<ResponseCategoryDTO> getAllCategories() {
         return toResponseCategoryDTO(categoryRepository.findAll());
+    }
+
+    @Override
+    public List<ResponseCategoryDTO> getTop8CategoriesByCourseCount() {
+        return toResponseCategoryDTO(categoryRepository.findTop8ByOrderByCoursesCountDesc());
     }
 
     @Override
@@ -39,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryRepository.existsByName(categoryDTO.getName())) {
             throw new AlreadyExistException("Категория с названием " + categoryDTO.getName() + " существует");
         }
-        categoryRepository.save(new Category(categoryDTO.getName()));
+        categoryRepository.save(new Category(categoryDTO.getName(), 0));
 
         return ResponseEntity.ok("Категория успешно добавлена");
     }

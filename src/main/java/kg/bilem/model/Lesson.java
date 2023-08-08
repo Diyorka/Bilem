@@ -1,10 +1,12 @@
 package kg.bilem.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import kg.bilem.enums.LessonType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "lesson")
@@ -15,11 +17,28 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Lesson extends BaseEntity{
-    String name;
+    String title;
 
+    @Column(columnDefinition = "TEXT")
     String content;
+
+    @Enumerated(EnumType.STRING)
+    LessonType lessonType;
+
+    Long ordinalNumber;
+
+    String imageUrl;
 
     String videoUrl;
 
-    LessonType lessonType;
+    String question;
+
+    String correctAnswer;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "lesson_incorrect_answers", joinColumns = @JoinColumn(name = "lesson_id"))
+    List<String> incorrectAnswers = new ArrayList<>();
+
+    @ManyToOne
+    Module module;
 }

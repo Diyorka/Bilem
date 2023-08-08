@@ -9,7 +9,6 @@ import kg.bilem.model.User;
 import kg.bilem.repository.RecoveryTokenRepository;
 import kg.bilem.repository.UserRepository;
 import kg.bilem.service.PasswordService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +46,7 @@ public class PasswordServiceImpl implements PasswordService {
             sendToken(recoveryToken, user);
         } else {
             RecoveryToken getToken = recoveryTokenRepository.findByUser(user);
-            if(Duration.between(getToken.getCreatedAt(), LocalDateTime.now()).toMinutes() < 1){
+            if(Duration.between(getToken.getCreatedAt(), LocalDateTime.now()).toSeconds() < 59){
                 return ResponseEntity.badRequest().body("С последнего запроса прошло меньше минуты, попробуйте повторно позже");
             }
             recoveryTokenRepository.delete(getToken);

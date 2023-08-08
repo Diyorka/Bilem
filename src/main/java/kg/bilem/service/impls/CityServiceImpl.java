@@ -7,20 +7,21 @@ import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.City;
 import kg.bilem.repository.CityRepository;
 import kg.bilem.service.CityService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static kg.bilem.dto.city.ResponseCityDTO.toResponseCityDTO;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class CityServiceImpl implements CityService {
-    private final CityRepository cityRepository;
+    CityRepository cityRepository;
 
     @Override
     public List<ResponseCityDTO> getAllCities() {

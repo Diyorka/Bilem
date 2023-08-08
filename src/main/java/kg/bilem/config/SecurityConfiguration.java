@@ -29,7 +29,17 @@ public class SecurityConfiguration {
             "/api/password/**",
             "/api/city/**",
             "/api/category/**",
-            "/api/subcategory/**"
+            "/api/subcategory/**",
+            "/api/course/**",
+            "/api/module/**",
+            "/api/lesson/**",
+            "/api/review/**",
+            "/api/review-reply/**",
+            "/api/notification/**",
+            "/api/subscription/**",
+            "/api/mailing/**",
+            "/api/comment/**",
+            "/api/comment-reply/**"
     };
 
     @Bean

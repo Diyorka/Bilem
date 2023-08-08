@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -41,7 +43,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(length = 500)
     String profile_description;
 
-    String activitySphere;
+    String activity_sphere;
 
     @ManyToOne
     City city;
@@ -62,21 +64,11 @@ public class User extends BaseEntity implements UserDetails {
 
     String dribble;
 
-    @ManyToMany
-    @JoinTable(
-            name = "teacher_course",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
-    List<Course> teachingCourses;
+    @ManyToMany(mappedBy = "teachers")
+    Set<Course> teachingCourses;
 
-    @ManyToMany
-    @JoinTable(
-            name = "student_course",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
-    List<Course> studyingCourses;
+    @ManyToMany(mappedBy = "students")
+    Set<Course> studyingCourses;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -106,5 +98,18 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return status == Status.ACTIVE;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

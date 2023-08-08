@@ -11,7 +11,10 @@ import kg.bilem.dto.user.UpdateUserDTO;
 import kg.bilem.model.User;
 import kg.bilem.service.UserService;
 import kg.bilem.service.impls.UserServiceImpl;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -23,53 +26,33 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
-@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
         name = "Контроллер для работы с пользователями",
         description = "В этом контроллере есть возможность получения, добавления, изменения и удаления пользователей"
 )
 public class UserController {
-    private final UserServiceImpl userService;
+    UserServiceImpl userService;
 
-    @GetMapping("/all")
+    @GetMapping("/my-info")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(
-            summary = "Получение всех пользователей"
+            summary = "Получение данных о пользователе"
     )
-    public Page<GetUserDTO> getAllUsers(@PageableDefault Pageable pageable) {
-        return userService.getAllUsers(pageable);
+    public GetUserDTO getUserInfo(@AuthenticationPrincipal User user){
+        return userService.getUserInfo(user);
     }
 
-    @GetMapping("/all/active")
-    @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(
-            summary = "Получение активных пользователей"
-    )
-    public Page<GetUserDTO> getAllActiveUsers(@PageableDefault Pageable pageable) {
-        return userService.getAllActiveUsers(pageable);
-    }
-
-    @SecurityRequirement(name = "JWT")
     @PutMapping("/change-my-info")
+    @SecurityRequirement(name = "JWT")
     @Operation(
             summary = "Изменение данных авторизованного пользователя"
     )
     public GetUserDTO changeUserInfo(@RequestBody @Valid UpdateUserDTO userDto,
                                      @AuthenticationPrincipal User user) {
         return userService.changeUserInfo(userDto, user);
-    }
-
-    @PostMapping("/addAdmin")
-    @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(
-            summary = "Добавление нового администратора"
-    )
-    public ResponseEntity<String> addAdmin(@RequestBody CreateUserDTO userDto) {
-        return userService.addAdmin(userDto);
     }
 
 }

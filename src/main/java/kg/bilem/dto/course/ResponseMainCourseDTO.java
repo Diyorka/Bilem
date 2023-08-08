@@ -1,22 +1,16 @@
 package kg.bilem.dto.course;
 
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import kg.bilem.dto.subcategory.RequestSubcategoryDTO;
 import kg.bilem.dto.subcategory.ResponseSubcategoryDTO;
 import kg.bilem.dto.user.GetUserDTO;
 import kg.bilem.enums.CourseType;
-import kg.bilem.enums.Language;
-import kg.bilem.enums.Status;
 import kg.bilem.model.Course;
-import kg.bilem.model.Subcategory;
-import kg.bilem.model.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kg.bilem.dto.review.ResponseReviewDTO.toResponseReviewDTO;
 import static kg.bilem.dto.subcategory.ResponseSubcategoryDTO.toResponseSubcategoryDTO;
 import static kg.bilem.dto.user.GetUserDTO.toGetUserDto;
 
@@ -26,10 +20,10 @@ import static kg.bilem.dto.user.GetUserDTO.toGetUserDto;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class GetCourseDTO {
+public class ResponseMainCourseDTO {
     Long id;
 
-    String name;
+    String title;
 
     String imageUrl;
 
@@ -47,18 +41,16 @@ public class GetCourseDTO {
 
     String language;
 
-    GetUserDTO owner;
-
-    List<GetUserDTO> teachers;
-
-    List<GetUserDTO> students;
+    int reviewsCount;
 
     int studentsCount;
 
-    public static GetCourseDTO toGetCourseDTO(Course course) {
-        return GetCourseDTO.builder()
+    Double averageScore;
+
+    public static ResponseMainCourseDTO toResponseMainCourseDTO(Course course) {
+        return ResponseMainCourseDTO.builder()
                 .id(course.getId())
-                .name(course.getName())
+                .title(course.getTitle())
                 .imageUrl(course.getImageUrl())
                 .videoUrl(course.getVideoUrl())
                 .description(course.getDescription())
@@ -67,14 +59,14 @@ public class GetCourseDTO {
                 .price(course.getCourseType() == CourseType.PAID ? course.getPrice() : 0)
                 .status(course.getStatus().name())
                 .language(course.getLanguage().name())
-                .owner(toGetUserDto(course.getOwner()))
-                .teachers(toGetUserDto(course.getTeachers()))
-                .students(toGetUserDto(course.getStudents()))
                 .studentsCount(course.getStudents().size())
+                .averageScore(course.getAverageScore())
+                .reviewsCount(course.getReviews().size())
                 .build();
     }
 
-    public static List<GetCourseDTO> toGetCourseDTO(List<Course> courses) {
-        return courses.stream().map(GetCourseDTO::toGetCourseDTO).collect(Collectors.toList());
+    public static List<ResponseMainCourseDTO> toResponseMainCourseDTO(List<Course> courses) {
+        return courses.stream().map(ResponseMainCourseDTO::toResponseMainCourseDTO).collect(Collectors.toList());
     }
+
 }

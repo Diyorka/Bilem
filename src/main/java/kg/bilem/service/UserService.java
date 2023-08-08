@@ -16,7 +16,14 @@ public interface UserService {
 
     Page<GetUserDTO> getAllActiveUsers(Pageable pageable);
 
+    Page<GetUserDTO> getAllStudents(Pageable pageable);
+
+    Page<GetUserDTO> getAllTeachers(Pageable pageable);
+
     GetUserDTO changeUserInfo(UpdateUserDTO userDto, User user);
 
     ResponseEntity<String> addAdmin(CreateUserDTO userDto);
+
+    GetUserDTO getUserInfo(User user);
+
 }

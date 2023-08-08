@@ -17,7 +17,7 @@ public class CreateUserDTO {
     @Email(message = "Введите электронную почту корректно")
     String email;
 
-    @Size(min = 4, max = 30, message = "Имя должно содержать от 4 до 30 символов")
+    @Size(min = 2, max = 30, message = "Имя должно содержать от 2 до 30 символов")
     String name;
 
     @Size(min = 4, max = 30, message = "Пароль должен содержать от 4 до 30 символов")

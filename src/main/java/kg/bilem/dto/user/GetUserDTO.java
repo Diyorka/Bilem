@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -56,7 +57,7 @@ public class GetUserDTO {
                 .imageUrl(user.getImageUrl())
                 .about_me(user.getAbout_me())
                 .profile_description(user.getProfile_description())
-                .activity_sphere(user.getActivitySphere())
+                .activity_sphere(user.getActivity_sphere())
                 .city(user.getCity() == null ? null : user.getCity().getName())
                 .work_place(user.getWorkPlace())
                 .instagram(user.getInstagram())
@@ -70,7 +71,7 @@ public class GetUserDTO {
                 .build();
     }
 
-    public static List<GetUserDTO> toGetUserDto(List<User> users){
+    public static List<GetUserDTO> toGetUserDto(Set<User> users){
         return users.stream().map(GetUserDTO::toGetUserDto).collect(Collectors.toList());
     }
 

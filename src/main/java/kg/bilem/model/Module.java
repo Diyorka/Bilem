@@ -1,10 +1,11 @@
 package kg.bilem.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import kg.bilem.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "module")
@@ -15,7 +16,9 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Module extends BaseEntity{
-    String name;
+    String title;
+
+    Long ordinalNumber;
 
     @ManyToOne
     Course course;

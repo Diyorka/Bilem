@@ -10,7 +10,9 @@ import kg.bilem.dto.user.CreateUserDTO;
 import kg.bilem.exception.UserAlreadyExistException;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.AuthenticationServiceImpl;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/auth")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Tag(
@@ -26,7 +29,7 @@ import java.io.IOException;
         description = "В этом контроллере есть возможности авторизации, регистрации, подтверждения аккаунта, обновления токена и выхода"
 )
 public class AuthenticationController {
-    private final AuthenticationServiceImpl service;
+    AuthenticationServiceImpl service;
 
     @PostMapping("/register")
     @Operation(
@@ -38,7 +41,7 @@ public class AuthenticationController {
         return service.register(request);
     }
 
-    @GetMapping("/resend-code")
+    @PostMapping("/resend-code")
     @Operation(
             summary = "Отправить код активации аккаунта повторно"
     )
@@ -62,7 +65,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.refreshToken(refreshToken));
     }
 
-    @GetMapping("/activate/{token}")
+    @PostMapping("/activate/{token}")
     @Operation(
             summary = "Активация аккаунта с помощью кода, отправленного на почту"
     )

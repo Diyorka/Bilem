@@ -5,6 +5,7 @@ import kg.bilem.dto.user.AuthUserDTO;
 import kg.bilem.dto.user.CreateUserDTO;
 import kg.bilem.enums.Role;
 import kg.bilem.enums.Status;
+import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.exception.TokenNotValidException;
 import kg.bilem.exception.UserAlreadyExistException;
@@ -17,8 +18,8 @@ import kg.bilem.repository.UserRepository;
 import kg.bilem.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -65,22 +66,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         RecoveryToken recoveryToken = constructToken(user);
         recoveryTokenRepository.save(recoveryToken);
+        log.info("your code: {}", recoveryToken.getToken());
 
         sendToken(recoveryToken, user);
 
-        return ResponseEntity.ok("Успешная регистрация! Ваш код активации был отправлен на почту.");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     public AuthenticationResponse authenticate(AuthUserDTO request) {
+        var user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new NotFoundException("Пользователь с такой почтой не найден"));
+
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+            throw new NoAccessException("Вы ввели неверный пароль");
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow();
+
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = generateRefreshToken(user);
         if (refreshTokenRepository.existsByUser(user)) {
@@ -143,7 +151,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = userRepository.findByEmail(email).get();
         RecoveryToken recoveryToken = recoveryTokenRepository.findByUser(user);
-        if (Duration.between(recoveryToken.getCreatedAt(), LocalDateTime.now()).toMinutes() < 1) {
+        if (Duration.between(recoveryToken.getCreatedAt(), LocalDateTime.now()).toSeconds() < 59) {
             return ResponseEntity.badRequest().body("С последнего запроса прошло меньше минуты, попробуйте повторно позже");
         }
 

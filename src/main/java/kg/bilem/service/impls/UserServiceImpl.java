@@ -10,12 +10,12 @@ import kg.bilem.exception.NotFoundException;
 import kg.bilem.exception.UserAlreadyExistException;
 import kg.bilem.model.User;
 import kg.bilem.repository.CityRepository;
-import kg.bilem.repository.RecoveryTokenRepository;
 import kg.bilem.repository.UserRepository;
 import kg.bilem.service.UserService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,24 +30,38 @@ import static kg.bilem.dto.user.GetUserDTO.toGetUserDto;
 
 @Service
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-    private final CityRepository cityRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final ModelMapper modelMapper;
+    UserRepository userRepository;
+    CityRepository cityRepository;
+    PasswordEncoder passwordEncoder;
 
     @Override
     public Page<GetUserDTO> getAllUsers(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
-        List<GetUserDTO> userDTOS = toGetUserDto(users.toList());
+        List<GetUserDTO> userDTOS = toGetUserDto(users.toSet());
         return new PageImpl<>(userDTOS, pageable, users.getTotalElements());
     }
 
     @Override
     public Page<GetUserDTO> getAllActiveUsers(Pageable pageable) {
         Page<User> users = userRepository.findAllByStatus(Status.ACTIVE, pageable);
-        List<GetUserDTO> userDTOS = toGetUserDto(users.toList());
+        List<GetUserDTO> userDTOS = toGetUserDto(users.toSet());
+        return new PageImpl<>(userDTOS, pageable, users.getTotalElements());
+    }
+
+    @Override
+    public Page<GetUserDTO> getAllStudents(Pageable pageable) {
+        Page<User> users = userRepository.findAllByStatusAndRole(Status.ACTIVE, Role.STUDENT, pageable);
+        List<GetUserDTO> userDTOS = toGetUserDto(users.toSet());
+        return new PageImpl<>(userDTOS, pageable, users.getTotalElements());
+    }
+
+    @Override
+    public Page<GetUserDTO> getAllTeachers(Pageable pageable) {
+        Page<User> users = userRepository.findAllByStatusAndRole(Status.ACTIVE, Role.TEACHER, pageable);
+        List<GetUserDTO> userDTOS = toGetUserDto(users.toSet());
         return new PageImpl<>(userDTOS, pageable, users.getTotalElements());
     }
 
@@ -56,15 +70,8 @@ public class UserServiceImpl implements UserService {
         if (!userDto.getEmail().equals(user.getEmail()) && userRepository.existsByEmail(userDto.getEmail())) {
             throw new AlreadyExistException("Пользователь с такой почтой уже зарегистрирован");
         }
-        if(!cityRepository.existsById(userDto.getCityId())){
-            throw new NotFoundException("Город с айди " + userDto.getCityId() + " не найден");
-        }
 
-        Long id = user.getId();
-        modelMapper.getConfiguration().setSkipNullEnabled(false);
-        modelMapper.map(userDto, user);
-        user.setId(id);
-
+        buildUser(user, userDto);
         return toGetUserDto(userRepository.save(user));
     }
 
@@ -89,5 +96,27 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         return ResponseEntity.ok("Администратор успешно добавлен");
+    }
+
+    @Override
+    public GetUserDTO getUserInfo(User user) {
+        return toGetUserDto(user);
+    }
+
+    private void buildUser(User user, UpdateUserDTO userDto) {
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        user.setAbout_me(userDto.getAbout_me());
+        user.setActivity_sphere(userDto.getActivity_sphere());
+        user.setProfile_description(userDto.getProfile_description());
+        user.setCity(cityRepository.findById(userDto.getCityId()).orElseThrow(() -> new NotFoundException("Город с айди " + userDto.getCityId() + " не найден")));
+        user.setWorkPlace(userDto.getWork_place());
+        user.setInstagram(userDto.getInstagram());
+        user.setGithub(userDto.getGithub());
+        user.setBehance(userDto.getBehance());
+        user.setTwitter(userDto.getTwitter());
+        user.setYoutube(userDto.getYoutube());
+        user.setTelegram(userDto.getTelegram());
+        user.setDribble(userDto.getDribble());
     }
 }
