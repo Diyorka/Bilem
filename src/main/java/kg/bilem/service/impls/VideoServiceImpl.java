@@ -71,7 +71,7 @@ public class VideoServiceImpl implements VideoService {
                 .method("POST", body)
                 .addHeader("Authorization", key)
                 .addHeader("X-Project-ID", getProjectIdFromKinescope(lesson))
-                .addHeader("X-Video-Title", lesson.getTitle())
+                .addHeader("X-Video-Title", file.getOriginalFilename())
                 .addHeader("X-Video-Description", "")
                 .addHeader("X-File-Name", file.getOriginalFilename())
                 .build();
