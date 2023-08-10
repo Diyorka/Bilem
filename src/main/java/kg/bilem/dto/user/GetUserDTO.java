@@ -1,6 +1,5 @@
 package kg.bilem.dto.user;
 
-import jakarta.persistence.Column;
 import kg.bilem.model.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
