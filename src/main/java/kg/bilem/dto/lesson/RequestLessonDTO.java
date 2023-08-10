@@ -28,8 +28,6 @@ public class RequestLessonDTO {
 
     String imageUrl;
 
-    String videoUrl;
-
     String question;
 
     String correctAnswer;
