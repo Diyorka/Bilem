@@ -23,6 +23,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/user")
@@ -43,6 +45,14 @@ public class UserController {
     )
     public GetUserDTO getUserInfo(@AuthenticationPrincipal User user){
         return userService.getUserInfo(user);
+    }
+
+    @GetMapping("/search-teachers/{name}")
+    @Operation(
+            summary = "Получение всех преподавателей по имени"
+    )
+    public List<GetUserDTO> getTeachersByName(@PathVariable String name){
+        return userService.getTeachersByName(name);
     }
 
     @PutMapping("/change-my-info")

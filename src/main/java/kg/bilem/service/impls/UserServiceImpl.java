@@ -24,7 +24,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static kg.bilem.dto.user.GetUserDTO.toGetUserDto;
 
@@ -36,6 +38,12 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     CityRepository cityRepository;
     PasswordEncoder passwordEncoder;
+
+    @Override
+    public List<GetUserDTO> getTeachersByName(String name) {
+        List<User> users = userRepository.findByNameContainsIgnoreCaseAndStatusAndRole(name, Status.ACTIVE, Role.TEACHER);
+        return toGetUserDto(new HashSet<>(users));
+    }
 
     @Override
     public Page<GetUserDTO> getAllUsers(Pageable pageable) {

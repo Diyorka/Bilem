@@ -11,7 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface UserService {
+    List<GetUserDTO> getTeachersByName(String name);
     Page<GetUserDTO> getAllUsers(Pageable pageable);
 
     Page<GetUserDTO> getAllActiveUsers(Pageable pageable);
