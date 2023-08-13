@@ -30,31 +30,6 @@ public class VideoServiceImpl implements VideoService {
     OkHttpClient client;
     String key = "Bearer 3bd30cb6-b312-47c3-8a07-5f4fb1c4f4b9";
 
-//    @Override
-//    public String saveVideo(MultipartFile file) throws IOException {
-//        if (file.isEmpty()) {
-//            throw new FileEmptyException("Файл пустой");
-//        }
-//
-//        final String urlKey = "cloudinary://298321212671499:SOxyj52dON_dPURTnhaTOCzswKY@bilem";
-//
-//        File saveFile = Files.createTempFile(
-//                        System.currentTimeMillis() + "",
-//                        Objects.requireNonNull
-//                                        (file.getOriginalFilename(), "Файл должен иметь расширение")
-//                                .substring(file.getOriginalFilename().lastIndexOf("."))
-//                )
-//                .toFile();
-//
-//        file.transferTo(saveFile);
-//
-//        Cloudinary cloudinary = new Cloudinary((urlKey));
-//
-//        Map upload = cloudinary.uploader().upload(saveFile, ObjectUtils.asMap("resource_type", "video"));
-//
-//        return (String) upload.get("url");
-//    }
-
     @Override
     public String saveVideo(MultipartFile file, Lesson lesson) throws IOException {
         if (file == null || file.isEmpty()) {

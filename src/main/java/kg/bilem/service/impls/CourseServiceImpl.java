@@ -55,15 +55,23 @@ public class CourseServiceImpl implements CourseService {
             throw new AlreadyExistException("Вы уже записаны на данный курс");
         }
 
-        if(course.getCourseType() == CourseType.FREE){
-            course.getStudents().add(user);
-            courseRepository.save(course);
-            return ResponseEntity.ok("Вы успешно записались на курс");
+        course.getStudents().add(user);
+        courseRepository.save(course);
+        return ResponseEntity.ok("Вы успешно записались на курс");
+    }
+
+    @Override
+    public ResponseEntity<String> leaveCourse(Long courseId, User user) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"));
+
+        if(!course.getStudents().contains(user)){
+            throw new NoAccessException("Вы не записаны на данный курс");
         }
 
-        //TODO реализовать покупку курса
-
-        return ResponseEntity.ok("Вы успешно купили курс");
+        course.getStudents().remove(user);
+        courseRepository.save(course);
+        return ResponseEntity.ok("Вы успешно удалили курс из вашего списка курсов");
     }
 
     @Override
