@@ -52,6 +52,16 @@ public class CourseController {
         return courseService.signUpForCourse(course_id, user);
     }
 
+    @DeleteMapping("/{course_id}/leave")
+    @SecurityRequirement(name = "JWT")
+    @Operation(
+            summary = "Покинуть курс"
+    )
+    public ResponseEntity<String> leaveCourse(@PathVariable Long course_id,
+                                              @AuthenticationPrincipal User user){
+        return courseService.leaveCourse(course_id, user);
+    }
+
     @PostMapping("/{course_id}/send-for-checking")
     @SecurityRequirement(name="JWT")
     @Operation(
