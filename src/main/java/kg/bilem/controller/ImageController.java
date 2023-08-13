@@ -3,6 +3,7 @@ package kg.bilem.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.ImageServiceImpl;
 import lombok.AccessLevel;
@@ -34,8 +35,8 @@ public class ImageController {
     @Operation(
             summary = "Добавление фото профиля"
     )
-    public ResponseEntity<String> saveUserImage(@AuthenticationPrincipal User user,
-                                                @RequestPart MultipartFile file) throws IOException {
+    public ResponseEntity<ResponseWithMessage> saveUserImage(@AuthenticationPrincipal User user,
+                                                             @RequestPart MultipartFile file) throws IOException {
         return imageService.saveForUser(user, file);
     }
 
@@ -45,7 +46,7 @@ public class ImageController {
     @Operation(
             summary = "Добавление изображения курса"
     )
-    public ResponseEntity<String> saveCourseImage(@PathVariable Long courseId,
+    public ResponseEntity<ResponseWithMessage> saveCourseImage(@PathVariable Long courseId,
                                                 @RequestPart MultipartFile file,
                                                 @AuthenticationPrincipal User user) throws IOException {
         return imageService.saveForCourse(courseId, file, user);

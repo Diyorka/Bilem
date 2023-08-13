@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.review.RequestReviewDTO;
 import kg.bilem.dto.review.ResponseReviewDTO;
 import kg.bilem.model.User;
@@ -35,9 +36,9 @@ public class ReviewController {
     @Operation(
             summary = "Добавление отзыва"
     )
-    public ResponseEntity<String> addReview(@PathVariable Long courseId,
-                                            @RequestBody @Valid RequestReviewDTO reviewDTO,
-                                            @AuthenticationPrincipal User user) {
+    public ResponseEntity<ResponseWithMessage> addReview(@PathVariable Long courseId,
+                                                         @RequestBody @Valid RequestReviewDTO reviewDTO,
+                                                         @AuthenticationPrincipal User user) {
         return reviewService.addReview(courseId, reviewDTO, user);
     }
 
@@ -46,7 +47,7 @@ public class ReviewController {
     @Operation(
             summary = "Редактирование отзыва"
     )
-    public ResponseEntity<String> editReview(@PathVariable Long reviewId,
+    public ResponseEntity<ResponseWithMessage> editReview(@PathVariable Long reviewId,
                                              @RequestBody RequestReviewDTO reviewDTO,
                                              @AuthenticationPrincipal User user) {
         return reviewService.editReview(reviewId, reviewDTO, user);
@@ -57,7 +58,7 @@ public class ReviewController {
     @Operation(
             summary = "Удаление отзыва"
     )
-    public ResponseEntity<String> deleteReview(@PathVariable Long reviewId,
+    public ResponseEntity<ResponseWithMessage> deleteReview(@PathVariable Long reviewId,
                                                @AuthenticationPrincipal User user) {
         return reviewService.deleteReview(reviewId, user);
     }

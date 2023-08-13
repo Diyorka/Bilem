@@ -1,5 +1,6 @@
 package kg.bilem.service.impls;
 
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.enums.LessonType;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
@@ -26,7 +27,7 @@ public class StudentProgressServiceImpl implements StudentProgressService {
     CourseRepository courseRepository;
 
     @Override
-    public ResponseEntity<String> startLesson(Long lessonId, User user) {
+    public ResponseEntity<ResponseWithMessage> startLesson(Long lessonId, User user) {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new NotFoundException("Урок с таким айди не найден"));
 
@@ -41,11 +42,11 @@ public class StudentProgressServiceImpl implements StudentProgressService {
                 .build();
 
         studentProgressRepository.save(studentProgress);
-        return ResponseEntity.ok("Вы начали урок с айди " + lessonId);
+        return ResponseEntity.ok(new ResponseWithMessage("Вы начали урок с айди " + lessonId));
     }
 
     @Override
-    public ResponseEntity<String> completeLesson(Long lessonId, String testAnswer, User user) {
+    public ResponseEntity<ResponseWithMessage> completeLesson(Long lessonId, String testAnswer, User user) {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new NotFoundException("Урок с таким айди не найден"));
 
@@ -57,12 +58,12 @@ public class StudentProgressServiceImpl implements StudentProgressService {
                 .orElseThrow(() -> new NotFoundException("Вы не начинали прохождение данного урока"));
 
         if (lesson.getLessonType() == LessonType.TEST && !lesson.getCorrectAnswer().equals(testAnswer)) {
-            return ResponseEntity.badRequest().body("Ответ на тест неправильный");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Ответ на тест неправильный"));
         }
 
         studentProgress.setCompleted(true);
         studentProgressRepository.save(studentProgress);
-        return ResponseEntity.ok("Вы успешно завершили урок");
+        return ResponseEntity.ok(new ResponseWithMessage("Вы успешно завершили урок"));
     }
 
     @Override

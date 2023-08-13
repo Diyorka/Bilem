@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import kg.bilem.dto.course.RequestCourseDTO;
 import kg.bilem.dto.course.ResponseCourseDTO;
 import kg.bilem.dto.course.ResponseMainCourseDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
+import kg.bilem.dto.other.SignedUp;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.CourseServiceImpl;
 import lombok.AccessLevel;
@@ -32,6 +34,16 @@ import org.springframework.web.bind.annotation.*;
 public class CourseController {
     CourseServiceImpl courseService;
 
+    @GetMapping("/is-signed-up/{course_id}")
+    @SecurityRequirement(name = "JWT")
+    @Operation(
+            summary = "Проверка записан ли пользователь на курс"
+    )
+    public SignedUp isSignedUp(@PathVariable Long course_id,
+                               @AuthenticationPrincipal User user){
+        return courseService.isSignedUp(course_id, user);
+    }
+
     @PostMapping("/add")
     @SecurityRequirement(name = "JWT")
     @Operation(
@@ -47,8 +59,8 @@ public class CourseController {
     @Operation(
             summary = "Записаться или купить курс"
     )
-    public ResponseEntity<String> signUpForCourse(@PathVariable Long course_id,
-                                                  @AuthenticationPrincipal User user){
+    public ResponseEntity<ResponseWithMessage> signUpForCourse(@PathVariable Long course_id,
+                                                               @AuthenticationPrincipal User user){
         return courseService.signUpForCourse(course_id, user);
     }
 
@@ -57,7 +69,7 @@ public class CourseController {
     @Operation(
             summary = "Покинуть курс"
     )
-    public ResponseEntity<String> leaveCourse(@PathVariable Long course_id,
+    public ResponseEntity<ResponseWithMessage> leaveCourse(@PathVariable Long course_id,
                                               @AuthenticationPrincipal User user){
         return courseService.leaveCourse(course_id, user);
     }
@@ -67,7 +79,7 @@ public class CourseController {
     @Operation(
             summary = "Отправка курса на проверку"
     )
-    public ResponseEntity<String> sendCourseForChecking(@PathVariable Long course_id,
+    public ResponseEntity<ResponseWithMessage> sendCourseForChecking(@PathVariable Long course_id,
                                                   @AuthenticationPrincipal User user){
         return courseService.sendCourseForChecking(course_id, user);
     }
@@ -77,7 +89,7 @@ public class CourseController {
     @Operation(
             summary = "Редактирование курса"
     )
-    public ResponseEntity<String> editCourse(@PathVariable Long id,
+    public ResponseEntity<ResponseWithMessage> editCourse(@PathVariable Long id,
                                              @RequestBody RequestCourseDTO courseDTO,
                                              @AuthenticationPrincipal User user) {
         return courseService.editCourse(id, courseDTO, user);
@@ -88,7 +100,7 @@ public class CourseController {
     @Operation(
             summary = "Добавить курс в архив"
     )
-    public ResponseEntity<String> archiveCourse(@PathVariable Long id,
+    public ResponseEntity<ResponseWithMessage> archiveCourse(@PathVariable Long id,
                                              @AuthenticationPrincipal User user) {
         return courseService.archiveCourse(id, user);
     }
@@ -98,7 +110,7 @@ public class CourseController {
     @Operation(
             summary = "Удалить курс"
     )
-    public ResponseEntity<String> deleteCourse(@PathVariable Long id,
+    public ResponseEntity<ResponseWithMessage> deleteCourse(@PathVariable Long id,
                                                 @AuthenticationPrincipal User user) {
         return courseService.deleteCourse(id, user);
     }

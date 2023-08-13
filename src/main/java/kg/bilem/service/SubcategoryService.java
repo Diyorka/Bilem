@@ -1,5 +1,6 @@
 package kg.bilem.service;
 
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.subcategory.RequestSubcategoryDTO;
 import kg.bilem.dto.subcategory.ResponseSubcategoryDTO;
 import org.springframework.http.ResponseEntity;
@@ -13,5 +14,5 @@ public interface SubcategoryService {
 
     ResponseSubcategoryDTO getSubcategoryById(Long id);
 
-    ResponseEntity<String> addSubcategory(RequestSubcategoryDTO subcategoryDTO);
+    ResponseEntity<ResponseWithMessage> addSubcategory(RequestSubcategoryDTO subcategoryDTO);
 }

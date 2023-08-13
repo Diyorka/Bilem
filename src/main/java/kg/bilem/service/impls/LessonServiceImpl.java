@@ -2,6 +2,7 @@ package kg.bilem.service.impls;
 
 import kg.bilem.dto.lesson.RequestLessonDTO;
 import kg.bilem.dto.lesson.ResponseLessonDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.enums.LessonType;
 import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.exception.NoAccessException;
@@ -79,7 +80,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public ResponseEntity<String> editLesson(Long lessonId, RequestLessonDTO lessonDTO, User user) {
+    public ResponseEntity<ResponseWithMessage> editLesson(Long lessonId, RequestLessonDTO lessonDTO, User user) {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new NotFoundException("Урок с таким айди не найден"));
 
@@ -97,11 +98,11 @@ public class LessonServiceImpl implements LessonService {
 
         lessonRepository.save(lesson);
 
-        return ResponseEntity.ok("Урок успешно отредактирован");
+        return ResponseEntity.ok(new ResponseWithMessage("Урок успешно отредактирован"));
     }
 
     @Override
-    public ResponseEntity<String> deleteLesson(Long lessonId, User user) {
+    public ResponseEntity<ResponseWithMessage> deleteLesson(Long lessonId, User user) {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new NotFoundException("Урок с таким айди не найден"));
 
@@ -110,7 +111,7 @@ public class LessonServiceImpl implements LessonService {
         }
 
         lessonRepository.delete(lesson);
-        return ResponseEntity.ok("Урок успешно удален");
+        return ResponseEntity.ok(new ResponseWithMessage("Урок успешно удален"));
     }
 
     @Override

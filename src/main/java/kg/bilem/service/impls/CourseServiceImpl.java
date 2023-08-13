@@ -3,6 +3,8 @@ package kg.bilem.service.impls;
 import kg.bilem.dto.course.RequestCourseDTO;
 import kg.bilem.dto.course.ResponseCourseDTO;
 import kg.bilem.dto.course.ResponseMainCourseDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
+import kg.bilem.dto.other.SignedUp;
 import kg.bilem.enums.CourseType;
 import kg.bilem.enums.Language;
 import kg.bilem.enums.Role;
@@ -47,7 +49,7 @@ public class CourseServiceImpl implements CourseService {
     NotificationRepository notificationRepository;
 
     @Override
-    public ResponseEntity<String> signUpForCourse(Long courseId, User user) {
+    public ResponseEntity<ResponseWithMessage> signUpForCourse(Long courseId, User user) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"));
 
@@ -57,11 +59,11 @@ public class CourseServiceImpl implements CourseService {
 
         course.getStudents().add(user);
         courseRepository.save(course);
-        return ResponseEntity.ok("Вы успешно записались на курс");
+        return ResponseEntity.ok(new ResponseWithMessage("Вы успешно записались на курс"));
     }
 
     @Override
-    public ResponseEntity<String> leaveCourse(Long courseId, User user) {
+    public ResponseEntity<ResponseWithMessage> leaveCourse(Long courseId, User user) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"));
 
@@ -71,11 +73,11 @@ public class CourseServiceImpl implements CourseService {
 
         course.getStudents().remove(user);
         courseRepository.save(course);
-        return ResponseEntity.ok("Вы успешно удалили курс из вашего списка курсов");
+        return ResponseEntity.ok(new ResponseWithMessage("Вы успешно удалили курс из вашего списка курсов"));
     }
 
     @Override
-    public ResponseEntity<String> sendCourseForChecking(Long courseId, User user) {
+    public ResponseEntity<ResponseWithMessage> sendCourseForChecking(Long courseId, User user) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"));
 
@@ -84,16 +86,16 @@ public class CourseServiceImpl implements CourseService {
         }
 
         if(!moduleRepository.existsByCourseId(courseId)){
-            return ResponseEntity.badRequest().body("Ваш курс не содержит модулей");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Ваш курс не содержит модулей"));
         }
 
         if(course.getStatus() == Status.CHECKING){
-            return ResponseEntity.badRequest().body("Курс уже не проверке");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Курс уже не проверке"));
         }
 
         course.setStatus(Status.CHECKING);
         courseRepository.save(course);
-        return ResponseEntity.ok("Курс отправлен на проверку");
+        return ResponseEntity.ok(new ResponseWithMessage("Курс отправлен на проверку"));
     }
 
     @Override
@@ -114,12 +116,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public ResponseEntity<String> editCourse(Long courseId, RequestCourseDTO courseDTO, User user) {
+    public ResponseEntity<ResponseWithMessage> editCourse(Long courseId, RequestCourseDTO courseDTO, User user) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с айди " + courseId + " не найден"));
 
         if (user.getRole() != Role.ADMIN || !user.getEmail().equals(course.getOwner().getEmail())) {
-            return ResponseEntity.badRequest().body("Вы не имеете права на редактирование данного курса");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Вы не имеете права на редактирование данного курса"));
         }
 
         course = buildCourse(courseDTO, user);
@@ -131,37 +133,37 @@ public class CourseServiceImpl implements CourseService {
         course.getSubcategory().getCategory().setCoursesCount(coursesCount - 1);
         categoryRepository.save(course.getSubcategory().getCategory());
 
-        return ResponseEntity.ok("Курс отправлен на модерацию");
+        return ResponseEntity.ok(new ResponseWithMessage("Курс отправлен на модерацию"));
     }
 
     @Override
-    public ResponseEntity<String> archiveCourse(Long courseId, User user) {
+    public ResponseEntity<ResponseWithMessage> archiveCourse(Long courseId, User user) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с айди " + courseId + " не найден"));
 
         if (user.getRole() != Role.ADMIN || !user.getEmail().equals(course.getOwner().getEmail())) {
-            return ResponseEntity.badRequest().body("Вы не имеете права на редактирование данного курса");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Вы не имеете права на редактирование данного курса"));
         }
 
         course.setStatus(Status.ARCHIVED);
         courseRepository.save(course);
 
-        return ResponseEntity.ok("Статус курса изменен");
+        return ResponseEntity.ok(new ResponseWithMessage("Статус курса изменен"));
     }
 
     @Override
-    public ResponseEntity<String> deleteCourse(Long courseId, User user) {
+    public ResponseEntity<ResponseWithMessage> deleteCourse(Long courseId, User user) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с айди " + courseId + " не найден"));
 
         if (user.getRole() != Role.ADMIN || !user.getEmail().equals(course.getOwner().getEmail())) {
-            return ResponseEntity.badRequest().body("Вы не имеете права на редактирование данного курса");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Вы не имеете права на редактирование данного курса"));
         }
 
         course.setStatus(Status.DELETED);
         courseRepository.save(course);
 
-        return ResponseEntity.ok("Курс удален");
+        return ResponseEntity.ok(new ResponseWithMessage("Курс удален"));
     }
 
     @Override
@@ -242,7 +244,7 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public ResponseEntity<String> approveCourse(Long courseId, User user) {
+    public ResponseEntity<ResponseWithMessage> approveCourse(Long courseId, User user) {
         if (user.getRole() != Role.ADMIN) {
             throw new NoAccessException("У вас нет доступа на одобрение курсов");
         }
@@ -263,11 +265,11 @@ public class CourseServiceImpl implements CourseService {
         sendNotification(course, header, message);
         sendMails();
 
-        return ResponseEntity.ok("Курс успешно одобрен");
+        return ResponseEntity.ok(new ResponseWithMessage("Курс успешно одобрен"));
     }
 
     @Override
-    public ResponseEntity<String> rejectCourse(Long courseId, String reason, User user) {
+    public ResponseEntity<ResponseWithMessage> rejectCourse(Long courseId, String reason, User user) {
         if (user.getRole() != Role.ADMIN) {
             throw new NoAccessException("У вас нет доступа на отклонение курсов");
         }
@@ -284,7 +286,7 @@ public class CourseServiceImpl implements CourseService {
         sendNotification(course, header, message);
         sendMails();
 
-        return ResponseEntity.ok("Курс успешно отклонен");
+        return ResponseEntity.ok(new ResponseWithMessage("Курс успешно отклонен"));
     }
 
     private void sendNotification(Course course, String header, String message) {
@@ -315,6 +317,18 @@ public class CourseServiceImpl implements CourseService {
         Page<Course> courses = courseRepository.findAllByStudentsContains(student, pageable);
         List<ResponseMainCourseDTO> courseDTOS = toResponseMainCourseDTO(courses.toList());
         return new PageImpl<>(courseDTOS, pageable, courses.getTotalElements());
+    }
+
+    @Override
+    public SignedUp isSignedUp(Long courseId, User user) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"));
+
+        if(course.getStudents().contains(user)){
+            return new SignedUp(true);
+        }
+
+        return new SignedUp(false);
     }
 
     private void sendMails() {

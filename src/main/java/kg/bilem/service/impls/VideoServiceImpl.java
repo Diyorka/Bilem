@@ -1,5 +1,6 @@
 package kg.bilem.service.impls;
 
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.enums.CourseType;
 import kg.bilem.enums.LessonType;
 import kg.bilem.exception.FileEmptyException;
@@ -57,7 +58,7 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public ResponseEntity<String> saveVideoForLesson(Long lessonId, String videoUrl, MultipartFile video, User user) throws IOException {
+    public ResponseEntity<ResponseWithMessage> saveVideoForLesson(Long lessonId, String videoUrl, MultipartFile video, User user) throws IOException {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new NotFoundException("Урок с таким айди не найден"));
 
@@ -72,13 +73,13 @@ public class VideoServiceImpl implements VideoService {
         if (lesson.getModule().getCourse().getCourseType() == CourseType.PAID) {
             lesson.setVideoUrl(saveVideo(video, lesson));
         } else if (videoUrl == null) {
-            return ResponseEntity.badRequest().body("VideoUrl не должен быть пустым");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("VideoUrl не должен быть пустым"));
         } else {
             lesson.setVideoUrl(videoUrl);
         }
 
         lessonRepository.save(lesson);
-        return ResponseEntity.ok("Видео успешно сохранено");
+        return ResponseEntity.ok(new ResponseWithMessage("Видео успешно сохранено"));
     }
 
     private String getProjectIdFromKinescope(Lesson lesson) throws IOException {

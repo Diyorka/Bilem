@@ -3,6 +3,7 @@ package kg.bilem.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.subscription.ResponseSubscriberDTO;
 import kg.bilem.dto.subscription.ResponseSubscriptionDTO;
 import kg.bilem.model.User;
@@ -55,8 +56,8 @@ public class SubscriptionController {
     @Operation(
             summary = "Подписаться на пользователя"
     )
-    public ResponseEntity<String> subscribeUser(@RequestParam Long userId,
-                                                @AuthenticationPrincipal User subscriber){
+    public ResponseEntity<ResponseWithMessage> subscribeUser(@RequestParam Long userId,
+                                                             @AuthenticationPrincipal User subscriber){
         return subscriptionService.subscribeUser(userId, subscriber);
     }
 
@@ -65,7 +66,7 @@ public class SubscriptionController {
     @Operation(
             summary = "Отписаться от пользователя"
     )
-    public ResponseEntity<String> unsubscribeUser(@RequestParam Long userId,
+    public ResponseEntity<ResponseWithMessage> unsubscribeUser(@RequestParam Long userId,
                                                   @AuthenticationPrincipal User subscriber){
         return subscriptionService.unsubscribeUser(userId, subscriber);
     }
@@ -75,7 +76,7 @@ public class SubscriptionController {
     @Operation(
             summary = "Удалить подписчика"
     )
-    public ResponseEntity<String> deleteSubscriber(@RequestParam Long subscriberId,
+    public ResponseEntity<ResponseWithMessage> deleteSubscriber(@RequestParam Long subscriberId,
                                                   @AuthenticationPrincipal User user){
         return subscriptionService.deleteSubscriber(subscriberId, user);
     }

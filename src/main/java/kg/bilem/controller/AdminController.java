@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kg.bilem.dto.course.ResponseMainCourseDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.user.CreateUserDTO;
 import kg.bilem.dto.user.GetUserDTO;
 import kg.bilem.model.Course;
@@ -92,8 +93,8 @@ public class AdminController {
     @Operation(
             summary = "Одобрить курс"
     )
-    public ResponseEntity<String> approveCourse(@PathVariable Long courseId,
-                                                @AuthenticationPrincipal User user){
+    public ResponseEntity<ResponseWithMessage> approveCourse(@PathVariable Long courseId,
+                                                             @AuthenticationPrincipal User user){
         return courseService.approveCourse(courseId, user);
     }
 
@@ -103,7 +104,7 @@ public class AdminController {
     @Operation(
             summary = "Отклонить курс с причиной"
     )
-    public ResponseEntity<String> rejectCourse(@PathVariable Long courseId,
+    public ResponseEntity<ResponseWithMessage> rejectCourse(@PathVariable Long courseId,
                                                 @RequestParam String reason,
                                                 @AuthenticationPrincipal User user){
         return courseService.rejectCourse(courseId, reason, user);
@@ -115,7 +116,7 @@ public class AdminController {
     @Operation(
             summary = "Добавление нового администратора"
     )
-    public ResponseEntity<String> addAdmin(@RequestBody @Valid CreateUserDTO userDto) {
+    public ResponseEntity<ResponseWithMessage> addAdmin(@RequestBody @Valid CreateUserDTO userDto) {
         return userService.addAdmin(userDto);
     }
 }

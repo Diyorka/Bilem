@@ -1,5 +1,6 @@
 package kg.bilem.service.impls;
 
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.user.ChangePasswordDTO;
 import kg.bilem.dto.user.ResetPasswordDTO;
 import kg.bilem.exception.NotFoundException;
@@ -34,7 +35,7 @@ public class PasswordServiceImpl implements PasswordService {
     private long recoveryValidityInSeconds;
 
     @Override
-    public ResponseEntity<String> forgotPassword(String userEmail) {
+    public ResponseEntity<ResponseWithMessage> forgotPassword(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(
                         () -> new NotFoundException("Пользователь с почтой " + userEmail + " не найден")
@@ -47,7 +48,7 @@ public class PasswordServiceImpl implements PasswordService {
         } else {
             RecoveryToken getToken = recoveryTokenRepository.findByUser(user);
             if(Duration.between(getToken.getCreatedAt(), LocalDateTime.now()).toSeconds() < 59){
-                return ResponseEntity.badRequest().body("С последнего запроса прошло меньше минуты, попробуйте повторно позже");
+                return ResponseEntity.badRequest().body(new ResponseWithMessage("С последнего запроса прошло меньше минуты, попробуйте повторно позже"));
             }
             recoveryTokenRepository.delete(getToken);
             RecoveryToken recoveryToken = constructToken(user);
@@ -55,11 +56,11 @@ public class PasswordServiceImpl implements PasswordService {
             sendToken(recoveryToken, user);
         }
 
-        return ResponseEntity.ok("Ваш код сброса пароля был отправлен на почту.");
+        return ResponseEntity.ok(new ResponseWithMessage("Ваш код сброса пароля был отправлен на почту."));
     }
 
     @Override
-    public ResponseEntity<String> setNewPassword(String token, ResetPasswordDTO password) {
+    public ResponseEntity<ResponseWithMessage> setNewPassword(String token, ResetPasswordDTO password) {
         RecoveryToken recoveryToken = recoveryTokenRepository.findByToken(token)
                 .orElseThrow(
                         () -> new TokenNotValidException("Неверный код")
@@ -75,7 +76,7 @@ public class PasswordServiceImpl implements PasswordService {
                 );
 
         if (!password.getPassword().equals(password.getConfirmPassword())) {
-            return ResponseEntity.badRequest().body("Пароли не совпадают!");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Пароли не совпадают!"));
         }
 
         user.setPassword(passwordEncoder.encode(password.getPassword()));
@@ -86,25 +87,25 @@ public class PasswordServiceImpl implements PasswordService {
         recoveryToken.setCreatedAt(null);
         recoveryTokenRepository.save(recoveryToken);
 
-        return ResponseEntity.ok("Пароль успешно сменен!");
+        return ResponseEntity.ok(new ResponseWithMessage("Пароль успешно сменен!"));
     }
 
     @Override
-    public ResponseEntity<String> changePasswordOfUser(ChangePasswordDTO changePasswordDTO, User user) {
+    public ResponseEntity<ResponseWithMessage> changePasswordOfUser(ChangePasswordDTO changePasswordDTO, User user) {
         if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
-            return ResponseEntity.badRequest().body("Старый пароль введен некорректно!");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Старый пароль введен некорректно!"));
         }
         if (passwordEncoder.matches(changePasswordDTO.getNewPassword(), user.getPassword())) {
-            return ResponseEntity.badRequest().body("Новый пароль совпадает со старым!");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Новый пароль совпадает со старым!"));
         }
         if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmNewPassword())) {
-            return ResponseEntity.badRequest().body("Пароли не совпадают!");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Пароли не совпадают!"));
         }
 
         user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
         userRepository.save(user);
 
-        return ResponseEntity.ok("Пароль успешно сменен!");
+        return ResponseEntity.ok(new ResponseWithMessage("Пароль успешно сменен!"));
     }
 
     private void sendToken(RecoveryToken recoveryToken, User user) {

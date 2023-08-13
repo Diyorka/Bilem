@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.bilem.dto.notification.ResponseNotificationDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.NotificationServiceImpl;
 import lombok.AccessLevel;
@@ -70,8 +71,8 @@ public class NotificationController {
     @Operation(
             summary = "Удалить уведомление по айди"
     )
-    public ResponseEntity<String> deleteNotificationById(@PathVariable Long id,
-                                                         @AuthenticationPrincipal User user){
+    public ResponseEntity<ResponseWithMessage> deleteNotificationById(@PathVariable Long id,
+                                                                      @AuthenticationPrincipal User user){
         return notificationServiceImpl.deleteNotificationById(id, user);
     }
 
@@ -80,7 +81,7 @@ public class NotificationController {
     @Operation(
             summary = "Удалить все уведомления авторизованного пользователя"
     )
-    public ResponseEntity<String> deleteAllNotificationsOfUser(@AuthenticationPrincipal User user){
+    public ResponseEntity<ResponseWithMessage> deleteAllNotificationsOfUser(@AuthenticationPrincipal User user){
         return notificationServiceImpl.deleteAllNotificationsOfUser(user);
     }
 }

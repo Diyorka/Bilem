@@ -3,6 +3,7 @@ package kg.bilem.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.subcategory.RequestSubcategoryDTO;
 import kg.bilem.dto.subcategory.ResponseSubcategoryDTO;
 import kg.bilem.service.impls.SubcategoryServiceImpl;
@@ -58,7 +59,7 @@ public class SubcategoryController {
     @Operation(
             summary = "Добавление новой подкатегории"
     )
-    public ResponseEntity<String> addSubcategory(@RequestBody RequestSubcategoryDTO subcategoryDTO) {
+    public ResponseEntity<ResponseWithMessage> addSubcategory(@RequestBody RequestSubcategoryDTO subcategoryDTO) {
         return subcategoryService.addSubcategory(subcategoryDTO);
     }
 }

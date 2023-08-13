@@ -1,6 +1,7 @@
 package kg.bilem.service;
 
 import kg.bilem.dto.AuthenticationResponse;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.user.AuthUserDTO;
 import kg.bilem.dto.user.CreateUserDTO;
 import kg.bilem.dto.user.GetUserDTO;
@@ -25,7 +26,7 @@ public interface UserService {
 
     GetUserDTO changeUserInfo(UpdateUserDTO userDto, User user);
 
-    ResponseEntity<String> addAdmin(CreateUserDTO userDto);
+    ResponseEntity<ResponseWithMessage> addAdmin(CreateUserDTO userDto);
 
     GetUserDTO getUserInfo(User user);
 

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kg.bilem.dto.favorite.RequestFavoriteDTO;
 import kg.bilem.dto.favorite.ResponseFavoriteDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.FavoriteServiceImpl;
 import lombok.AccessLevel;
@@ -36,8 +37,8 @@ public class FavoriteController {
     @Operation(
             summary = "Добавление курса в избранное"
     )
-    public ResponseEntity<String> addFavorite(@RequestBody @Valid RequestFavoriteDTO favoriteDTO,
-                                              @AuthenticationPrincipal User user){
+    public ResponseEntity<ResponseWithMessage> addFavorite(@RequestBody @Valid RequestFavoriteDTO favoriteDTO,
+                                                           @AuthenticationPrincipal User user){
         return favoriteService.addFavorite(favoriteDTO, user);
     }
 
@@ -56,7 +57,7 @@ public class FavoriteController {
     @Operation(
             summary = "Удаление избранного по айди"
     )
-    public ResponseEntity<String> deleteFavoriteById(@PathVariable Long id,
+    public ResponseEntity<ResponseWithMessage> deleteFavoriteById(@PathVariable Long id,
                                                      @AuthenticationPrincipal User user){
         return favoriteService.deleteFavoriteById(id, user);
     }
