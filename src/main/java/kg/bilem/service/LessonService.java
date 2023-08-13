@@ -2,6 +2,7 @@ package kg.bilem.service;
 
 import kg.bilem.dto.lesson.RequestLessonDTO;
 import kg.bilem.dto.lesson.ResponseLessonDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,7 @@ public interface LessonService {
 
     ResponseLessonDTO createLesson(RequestLessonDTO lessonDTO, User user);
 
-    ResponseEntity<String> editLesson(Long lessonId, RequestLessonDTO lessonDTO, User user);
+    ResponseEntity<ResponseWithMessage> editLesson(Long lessonId, RequestLessonDTO lessonDTO, User user);
 
-    ResponseEntity<String> deleteLesson(Long lessonId, User user);
+    ResponseEntity<ResponseWithMessage> deleteLesson(Long lessonId, User user);
 }

@@ -1,5 +1,6 @@
 package kg.bilem.service.impls;
 
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.user.CreateUserDTO;
 import kg.bilem.dto.user.GetUserDTO;
 import kg.bilem.dto.user.UpdateUserDTO;
@@ -84,14 +85,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<String> addAdmin(CreateUserDTO userDto) {
+    public ResponseEntity<ResponseWithMessage> addAdmin(CreateUserDTO userDto) {
         if (userRepository.existsByEmail(userDto.getEmail()))
             throw new UserAlreadyExistException(
                     "email",
                     "Пользователь с такой почтой уже существует"
             );
         if(!userDto.getPassword().equals(userDto.getConfirmPassword())){
-            return ResponseEntity.badRequest().body("Пароли не совпадают");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Пароли не совпадают"));
         }
 
         User user = User.builder()
@@ -103,7 +104,7 @@ public class UserServiceImpl implements UserService {
                 .build();
         userRepository.save(user);
 
-        return ResponseEntity.ok("Администратор успешно добавлен");
+        return ResponseEntity.ok(new ResponseWithMessage("Администратор успешно добавлен"));
     }
 
     @Override

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kg.bilem.dto.lesson.RequestLessonDTO;
 import kg.bilem.dto.lesson.ResponseLessonDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.LessonServiceImpl;
 import kg.bilem.service.impls.VideoServiceImpl;
@@ -72,10 +73,10 @@ public class LessonController {
     @Operation(
             summary = "Добавление видео к уроку"
     )
-    public ResponseEntity<String> addVideoForLesson(@PathVariable Long lesson_id,
-                                                    @RequestParam(required = false) String videoUrl,
-                                                    @RequestPart(required = false) MultipartFile file,
-                                                    @AuthenticationPrincipal User user) throws IOException {
+    public ResponseEntity<ResponseWithMessage> addVideoForLesson(@PathVariable Long lesson_id,
+                                                                 @RequestParam(required = false) String videoUrl,
+                                                                 @RequestPart(required = false) MultipartFile file,
+                                                                 @AuthenticationPrincipal User user) throws IOException {
         return videoService.saveVideoForLesson(lesson_id, videoUrl, file, user);
     }
 
@@ -85,7 +86,7 @@ public class LessonController {
     @Operation(
             summary = "Изменение урока"
     )
-    public ResponseEntity<String> editLesson(@PathVariable Long lesson_id,
+    public ResponseEntity<ResponseWithMessage> editLesson(@PathVariable Long lesson_id,
                                              @RequestBody @Valid RequestLessonDTO lessonDTO,
                                              @AuthenticationPrincipal User user){
         return lessonService.editLesson(lesson_id, lessonDTO, user);
@@ -96,7 +97,7 @@ public class LessonController {
     @Operation(
             summary = "Удаление урока"
     )
-    public ResponseEntity<String> deleteLesson(@PathVariable Long lesson_id,
+    public ResponseEntity<ResponseWithMessage> deleteLesson(@PathVariable Long lesson_id,
                                                @AuthenticationPrincipal User user){
         return lessonService.deleteLesson(lesson_id, user);
     }

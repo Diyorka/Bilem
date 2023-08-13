@@ -1,6 +1,7 @@
 package kg.bilem.service.impls;
 
 import kg.bilem.dto.notification.ResponseNotificationDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.enums.Status;
 import kg.bilem.exception.NotFoundException;
 import kg.bilem.model.Notification;
@@ -64,17 +65,17 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public ResponseEntity<String> deleteNotificationById(Long id, User user) {
+    public ResponseEntity<ResponseWithMessage> deleteNotificationById(Long id, User user) {
         Notification notification = findNotificationByIdAndUser(id, user);
 
         notification.setStatus(Status.DELETED);
         notificationRepository.save(notification);
 
-        return ResponseEntity.ok("Уведомление удалено");
+        return ResponseEntity.ok(new ResponseWithMessage("Уведомление удалено"));
     }
 
     @Override
-    public ResponseEntity<String> deleteAllNotificationsOfUser(User user) {
+    public ResponseEntity<ResponseWithMessage> deleteAllNotificationsOfUser(User user) {
         List<Notification> notifications = findNotificationsByUser(user);
 
         for(Notification notification:notifications){
@@ -82,7 +83,7 @@ public class NotificationServiceImpl implements NotificationService {
             notificationRepository.save(notification);
         }
 
-        return ResponseEntity.ok("Уведомления удалены");
+        return ResponseEntity.ok(new ResponseWithMessage("Уведомления удалены"));
     }
 
     private List<Notification> findNotificationsByUser(User user) {

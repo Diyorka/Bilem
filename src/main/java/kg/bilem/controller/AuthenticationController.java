@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kg.bilem.dto.AuthenticationResponse;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.user.AuthUserDTO;
 import kg.bilem.dto.user.CreateUserDTO;
 import kg.bilem.exception.UserAlreadyExistException;
@@ -35,7 +36,7 @@ public class AuthenticationController {
     @Operation(
             summary = "Регистрация нового аккаунта"
     )
-    public ResponseEntity<String> register(
+    public ResponseEntity<ResponseWithMessage> register(
             @Valid @RequestBody CreateUserDTO request
     ) throws UserAlreadyExistException {
         return service.register(request);
@@ -45,7 +46,7 @@ public class AuthenticationController {
     @Operation(
             summary = "Отправить код активации аккаунта повторно"
     )
-    public ResponseEntity<String> resendCode(@RequestParam String email) {
+    public ResponseEntity<ResponseWithMessage> resendCode(@RequestParam String email) {
         return service.resendCode(email);
     }
 
@@ -69,7 +70,7 @@ public class AuthenticationController {
     @Operation(
             summary = "Активация аккаунта с помощью кода, отправленного на почту"
     )
-    public ResponseEntity<String> activate(@PathVariable String token) {
+    public ResponseEntity<ResponseWithMessage> activate(@PathVariable String token) {
         return service.activateAccount(token);
     }
 
@@ -78,7 +79,7 @@ public class AuthenticationController {
     @Operation(
             summary = "Выход из аккаунта"
     )
-    public ResponseEntity<String> logout(@AuthenticationPrincipal User user) {
+    public ResponseEntity<ResponseWithMessage> logout(@AuthenticationPrincipal User user) {
         return service.logout(user);
     }
 }

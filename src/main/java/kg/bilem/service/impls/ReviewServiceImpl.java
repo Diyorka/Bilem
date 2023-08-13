@@ -1,5 +1,6 @@
 package kg.bilem.service.impls;
 
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.review.RequestReviewDTO;
 import kg.bilem.dto.review.ResponseReviewDTO;
 import kg.bilem.enums.Role;
@@ -37,9 +38,9 @@ public class ReviewServiceImpl implements ReviewService {
     StudentProgressService studentProgressService;
 
     @Override
-    public ResponseEntity<String> addReview(Long courseId,
-                                            RequestReviewDTO reviewDTO,
-                                            User user) {
+    public ResponseEntity<ResponseWithMessage> addReview(Long courseId,
+                                                         RequestReviewDTO reviewDTO,
+                                                         User user) {
         if (reviewRepository.existsByCourseIdAndUserId(courseId, user.getId())) {
             throw new AlreadyExistException("Этот пользователь уже оставил отзыв на данный курс");
         }
@@ -54,11 +55,11 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.save(constructReview(reviewDTO, user, course));
         updateCourseAverageScore(course);
 
-        return ResponseEntity.ok("Отзыв успешно добавлен");
+        return ResponseEntity.ok(new ResponseWithMessage("Отзыв успешно добавлен"));
     }
 
     @Override
-    public ResponseEntity<String> editReview(Long reviewId, RequestReviewDTO reviewDTO, User user) {
+    public ResponseEntity<ResponseWithMessage> editReview(Long reviewId, RequestReviewDTO reviewDTO, User user) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new NotFoundException("Отзыв с таким айди не найден"));
 
@@ -70,11 +71,11 @@ public class ReviewServiceImpl implements ReviewService {
         review.setScore(reviewDTO.getScore());
         reviewRepository.save(review);
 
-        return ResponseEntity.ok("Отзыв успешно отредактирован");
+        return ResponseEntity.ok(new ResponseWithMessage("Отзыв успешно отредактирован"));
     }
 
     @Override
-    public ResponseEntity<String> deleteReview(Long reviewId, User user) {
+    public ResponseEntity<ResponseWithMessage> deleteReview(Long reviewId, User user) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new NotFoundException("Отзыв с таким айди не найден"));
 
@@ -86,7 +87,7 @@ public class ReviewServiceImpl implements ReviewService {
         reviewReplyRepository.deleteAll(reviewReplies);
         reviewRepository.delete(review);
 
-        return ResponseEntity.ok("Отзыв успешно удален");
+        return ResponseEntity.ok(new ResponseWithMessage("Отзыв успешно удален"));
     }
 
 

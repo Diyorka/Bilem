@@ -2,6 +2,7 @@ package kg.bilem.service.impls;
 
 import kg.bilem.dto.favorite.RequestFavoriteDTO;
 import kg.bilem.dto.favorite.ResponseFavoriteDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
@@ -38,7 +39,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     @Override
-    public ResponseEntity<String> addFavorite(RequestFavoriteDTO requestFavoriteDTO, User user) {
+    public ResponseEntity<ResponseWithMessage> addFavorite(RequestFavoriteDTO requestFavoriteDTO, User user) {
         if (favoriteRepository.existsByCourseIdAndUserId(requestFavoriteDTO.getCourse_id(), user.getId())) {
             throw new AlreadyExistException("Курс уже находится в избранных");
         }
@@ -50,11 +51,11 @@ public class FavoriteServiceImpl implements FavoriteService {
                 .user(user)
                 .build()
         );
-        return ResponseEntity.ok("Курс успешно добавлен в избранное");
+        return ResponseEntity.ok(new ResponseWithMessage("Курс успешно добавлен в избранное"));
     }
 
     @Override
-    public ResponseEntity<String> deleteFavoriteById(Long id, User user) {
+    public ResponseEntity<ResponseWithMessage> deleteFavoriteById(Long id, User user) {
         Favorite favorite = favoriteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Избранное не найдено"));
         if (!favorite.getUser().equals(user)) {
@@ -62,6 +63,6 @@ public class FavoriteServiceImpl implements FavoriteService {
         }
 
         favoriteRepository.delete(favorite);
-        return ResponseEntity.ok("Успешно удалено из избранных");
+        return ResponseEntity.ok(new ResponseWithMessage("Успешно удалено из избранных"));
     }
 }

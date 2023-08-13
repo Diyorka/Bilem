@@ -1,8 +1,9 @@
 package kg.bilem.service;
 
 import kg.bilem.dto.mailing.RequestMailingDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import org.springframework.http.ResponseEntity;
 
 public interface MailingService {
-    ResponseEntity<String> addToMailingList(RequestMailingDTO mailingDTO);
+    ResponseEntity<ResponseWithMessage> addToMailingList(RequestMailingDTO mailingDTO);
 }

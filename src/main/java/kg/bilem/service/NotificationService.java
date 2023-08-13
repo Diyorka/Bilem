@@ -1,6 +1,7 @@
 package kg.bilem.service;
 
 import kg.bilem.dto.notification.ResponseNotificationDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.model.User;
 import org.springframework.http.ResponseEntity;
 
@@ -11,6 +12,6 @@ public interface NotificationService {
     ResponseNotificationDTO getNotificationById(Long id, User user);
     List<ResponseNotificationDTO> markAllNotificationsAsReadByUser(User user);
     ResponseNotificationDTO markNotificationAsReadById(Long id, User user);
-    ResponseEntity<String> deleteNotificationById(Long id, User user);
-    ResponseEntity<String> deleteAllNotificationsOfUser(User user);
+    ResponseEntity<ResponseWithMessage> deleteNotificationById(Long id, User user);
+    ResponseEntity<ResponseWithMessage> deleteAllNotificationsOfUser(User user);
 }

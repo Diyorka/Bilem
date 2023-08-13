@@ -1,5 +1,6 @@
 package kg.bilem.service.impls;
 
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.subscription.ResponseSubscriberDTO;
 import kg.bilem.dto.subscription.ResponseSubscriptionDTO;
 import kg.bilem.enums.Status;
@@ -34,7 +35,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     SubscriptionRepository subscriptionRepository;
 
     @Override
-    public ResponseEntity<String> subscribeUser(Long userId, User subscriber) {
+    public ResponseEntity<ResponseWithMessage> subscribeUser(Long userId, User subscriber) {
         User user = userRepository.findById(userId)
                 .filter(u -> u.getStatus() == Status.ACTIVE)
                 .orElseThrow(() -> new NotFoundException("Пользователь с таким айди не найден"));
@@ -51,16 +52,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                         .user(user)
                 .build()
         );
-        return ResponseEntity.ok("Вы успешно подписались на данного пользователя");
+        return ResponseEntity.ok(new ResponseWithMessage("Вы успешно подписались на данного пользователя"));
     }
 
     @Override
-    public ResponseEntity<String> unsubscribeUser(Long userId, User subscriber) {
+    public ResponseEntity<ResponseWithMessage> unsubscribeUser(Long userId, User subscriber) {
         Subscription subscription = subscriptionRepository.findByUserIdAndSubscriberId(userId, subscriber.getId())
                         .orElseThrow(() -> new NotFoundException("Вы не подписаны на данного пользователя"));
 
         subscriptionRepository.delete(subscription);
-        return ResponseEntity.ok("Вы успешно отписались от данного пользователя");
+        return ResponseEntity.ok(new ResponseWithMessage("Вы успешно отписались от данного пользователя"));
     }
 
     @Override
@@ -78,11 +79,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public ResponseEntity<String> deleteSubscriber(Long subscriberId, User user) {
+    public ResponseEntity<ResponseWithMessage> deleteSubscriber(Long subscriberId, User user) {
         Subscription subscription = subscriptionRepository.findByUserIdAndSubscriberId(user.getId(), subscriberId)
                 .orElseThrow(() -> new NotFoundException("Данный пользователь не подписан на вас"));
 
         subscriptionRepository.delete(subscription);
-        return ResponseEntity.ok("Вы успешно отписали данного пользователя");
+        return ResponseEntity.ok(new ResponseWithMessage("Вы успешно отписали данного пользователя"));
     }
 }

@@ -8,6 +8,7 @@ import kg.bilem.dto.course.RequestCourseDTO;
 import kg.bilem.dto.course.ResponseCourseDTO;
 import kg.bilem.dto.module.RequestModuleDTO;
 import kg.bilem.dto.module.ResponseModuleDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.model.User;
 import kg.bilem.service.impls.ModuleServiceImpl;
 import kg.bilem.service.impls.VideoServiceImpl;
@@ -63,9 +64,9 @@ public class ModuleController {
     @Operation(
             summary = "Редактирование модуля"
     )
-    public ResponseEntity<String> editModule(@PathVariable Long module_id,
-                                             @RequestBody @Valid RequestModuleDTO moduleDTO,
-                                             @AuthenticationPrincipal User user){
+    public ResponseEntity<ResponseWithMessage> editModule(@PathVariable Long module_id,
+                                                          @RequestBody @Valid RequestModuleDTO moduleDTO,
+                                                          @AuthenticationPrincipal User user){
         return moduleService.editModule(module_id, moduleDTO, user);
     }
 
@@ -74,7 +75,7 @@ public class ModuleController {
     @Operation(
             summary = "Удаление модуля и всех его уроков"
     )
-    public ResponseEntity<String> deleteModule(@PathVariable Long module_id,
+    public ResponseEntity<ResponseWithMessage> deleteModule(@PathVariable Long module_id,
                                                @AuthenticationPrincipal User user){
         return moduleService.deleteModule(module_id, user);
     }

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.bilem.dto.mailing.RequestMailingDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.service.impls.MailingServiceImpl;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class MailingController {
     @Operation(
             summary = "Подписаться на рассылку"
     )
-    public ResponseEntity<String> addToMailingList(@RequestBody RequestMailingDTO mailingDTO){
+    public ResponseEntity<ResponseWithMessage> addToMailingList(@RequestBody RequestMailingDTO mailingDTO){
         return mailingService.addToMailingList(mailingDTO);
     }
 }

@@ -1,6 +1,7 @@
 package kg.bilem.service.impls;
 
 import kg.bilem.dto.mailing.RequestMailingDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.model.Mailing;
 import kg.bilem.repository.MailingRepository;
@@ -18,7 +19,7 @@ public class MailingServiceImpl implements MailingService {
     MailingRepository mailingRepository;
 
     @Override
-    public ResponseEntity<String> addToMailingList(RequestMailingDTO mailingDTO) {
+    public ResponseEntity<ResponseWithMessage> addToMailingList(RequestMailingDTO mailingDTO) {
         if(mailingRepository.existsByEmail(mailingDTO.getEmail())){
             throw new AlreadyExistException("Вы уже подписаны на рассылку");
         }
@@ -28,6 +29,6 @@ public class MailingServiceImpl implements MailingService {
                         .email(mailingDTO.getEmail())
                         .build()
         );
-        return ResponseEntity.ok("Вы успешно подписались на рассылку");
+        return ResponseEntity.ok(new ResponseWithMessage("Вы успешно подписались на рассылку"));
     }
 }

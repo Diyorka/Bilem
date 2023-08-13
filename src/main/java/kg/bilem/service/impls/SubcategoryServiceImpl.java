@@ -1,5 +1,6 @@
 package kg.bilem.service.impls;
 
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.subcategory.RequestSubcategoryDTO;
 import kg.bilem.dto.subcategory.ResponseSubcategoryDTO;
 import kg.bilem.exception.AlreadyExistException;
@@ -46,7 +47,7 @@ public class SubcategoryServiceImpl implements SubcategoryService {
     }
 
     @Override
-    public ResponseEntity<String> addSubcategory(RequestSubcategoryDTO subcategoryDTO) {
+    public ResponseEntity<ResponseWithMessage> addSubcategory(RequestSubcategoryDTO subcategoryDTO) {
         if(subcategoryRepository.existsByNameAndCategoryId(subcategoryDTO.getName(), subcategoryDTO.getCategoryId())){
             throw new AlreadyExistException("Подкатегория с таким названием уже существует в данной категории");
         }
@@ -59,6 +60,6 @@ public class SubcategoryServiceImpl implements SubcategoryService {
         subcategory.setCategory(category);
         subcategoryRepository.save(subcategory);
 
-        return ResponseEntity.ok("Подкатегория добавлена");
+        return ResponseEntity.ok(new ResponseWithMessage("Подкатегория добавлена"));
     }
 }

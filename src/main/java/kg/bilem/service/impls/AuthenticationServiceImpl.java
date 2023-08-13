@@ -1,6 +1,7 @@
 package kg.bilem.service.impls;
 
 import kg.bilem.dto.AuthenticationResponse;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.user.AuthUserDTO;
 import kg.bilem.dto.user.CreateUserDTO;
 import kg.bilem.enums.Role;
@@ -50,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private long refreshExpirationInMs;
 
     @Override
-    public ResponseEntity<String> register(CreateUserDTO request) throws UserAlreadyExistException {
+    public ResponseEntity<ResponseWithMessage> register(CreateUserDTO request) throws UserAlreadyExistException {
         if (userRepository.existsByEmail(request.getEmail()))
             throw new UserAlreadyExistException(
                     "email",
@@ -58,7 +59,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             );
 
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            return ResponseEntity.badRequest().body("Пароли не совпадают");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("Пароли не совпадают"));
         }
 
         var user = buildUser(request);
@@ -70,7 +71,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         sendToken(recoveryToken, user);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(new ResponseWithMessage("Аккаунт успешно зарегистрирован"));
     }
 
     @Override
@@ -117,7 +118,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ResponseEntity<String> activateAccount(String token) {
+    public ResponseEntity<ResponseWithMessage> activateAccount(String token) {
         RecoveryToken recoveryToken = recoveryTokenRepository.findByToken(token)
                 .orElseThrow(
                         () -> new TokenNotValidException("Неверный код")
@@ -133,18 +134,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         recoveryTokenRepository.delete(recoveryToken);
 
-        return ResponseEntity.ok("Аккаунт успешно активирован!");
+        return ResponseEntity.ok(new ResponseWithMessage("Аккаунт успешно активирован!"));
     }
 
     @Override
-    public ResponseEntity<String> logout(User user) {
+    public ResponseEntity<ResponseWithMessage> logout(User user) {
         RefreshToken refreshToken = refreshTokenRepository.findByUser(user);
         refreshTokenRepository.delete(refreshToken);
-        return ResponseEntity.ok("Успешный выход");
+        return ResponseEntity.ok(new ResponseWithMessage("Успешный выход"));
     }
 
     @Override
-    public ResponseEntity<String> resendCode(String email) {
+    public ResponseEntity<ResponseWithMessage> resendCode(String email) {
         if (!userRepository.existsByEmail(email)) {
             throw new NotFoundException("Пользователь с такой почтой не найден");
         }
@@ -152,7 +153,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userRepository.findByEmail(email).get();
         RecoveryToken recoveryToken = recoveryTokenRepository.findByUser(user);
         if (Duration.between(recoveryToken.getCreatedAt(), LocalDateTime.now()).toSeconds() < 59) {
-            return ResponseEntity.badRequest().body("С последнего запроса прошло меньше минуты, попробуйте повторно позже");
+            return ResponseEntity.badRequest().body(new ResponseWithMessage("С последнего запроса прошло меньше минуты, попробуйте повторно позже"));
         }
 
         recoveryTokenRepository.delete(recoveryToken);
@@ -160,7 +161,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         recoveryTokenRepository.save(newToken);
         sendToken(newToken, user);
 
-        return ResponseEntity.ok("Код успешно отправлен");
+        return ResponseEntity.ok(new ResponseWithMessage("Код успешно отправлен"));
     }
 
     private void sendToken(RecoveryToken recoveryToken, User user) {

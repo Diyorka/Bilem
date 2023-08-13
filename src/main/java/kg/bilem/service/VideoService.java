@@ -1,5 +1,6 @@
 package kg.bilem.service;
 
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.model.Lesson;
 import kg.bilem.model.User;
 import org.springframework.http.ResponseEntity;
@@ -10,5 +11,5 @@ import java.io.IOException;
 public interface VideoService {
     String saveVideo(MultipartFile file, Lesson lesson) throws IOException;
 
-    ResponseEntity<String> saveVideoForLesson(Long lessonId, String videoUrl, MultipartFile file, User user) throws IOException;
+    ResponseEntity<ResponseWithMessage> saveVideoForLesson(Long lessonId, String videoUrl, MultipartFile file, User user) throws IOException;
 }

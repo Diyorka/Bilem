@@ -2,6 +2,7 @@ package kg.bilem.service.impls;
 
 import kg.bilem.dto.module.RequestModuleDTO;
 import kg.bilem.dto.module.ResponseModuleDTO;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
@@ -60,7 +61,7 @@ public class ModuleServiceImpl implements ModuleService {
     }
 
     @Override
-    public ResponseEntity<String> editModule(Long moduleId, RequestModuleDTO moduleDTO, User user) {
+    public ResponseEntity<ResponseWithMessage> editModule(Long moduleId, RequestModuleDTO moduleDTO, User user) {
         Module module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new NotFoundException("Модуль с таким айди не найден"));
 
@@ -72,11 +73,11 @@ public class ModuleServiceImpl implements ModuleService {
         module.setTitle(moduleDTO.getTitle());
         moduleRepository.save(module);
 
-        return ResponseEntity.ok("Модуль успешно отредактирован");
+        return ResponseEntity.ok(new ResponseWithMessage("Модуль успешно отредактирован"));
     }
 
     @Override
-    public ResponseEntity<String> deleteModule(Long moduleId, User user) {
+    public ResponseEntity<ResponseWithMessage> deleteModule(Long moduleId, User user) {
         Module module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new NotFoundException("Модуль с таким айди не найден"));
         if (!user.getEmail().equals(module.getCourse().getOwner().getEmail())) {
@@ -87,7 +88,7 @@ public class ModuleServiceImpl implements ModuleService {
         lessonRepository.deleteAll(lessons);
         moduleRepository.delete(module);
 
-        return ResponseEntity.ok("Модуль и все его данные успешно удалены");
+        return ResponseEntity.ok(new ResponseWithMessage("Модуль и все его данные успешно удалены"));
     }
 
 

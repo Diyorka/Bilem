@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.dto.user.ChangePasswordDTO;
 import kg.bilem.dto.user.ResetPasswordDTO;
 import kg.bilem.model.User;
@@ -32,7 +33,7 @@ public class PasswordController {
     @Operation(
             summary = "Восстановление пароля по почте"
     )
-    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+    public ResponseEntity<ResponseWithMessage> forgotPassword(@RequestParam String email) {
         return passwordService.forgotPassword(email);
     }
 
@@ -40,7 +41,7 @@ public class PasswordController {
     @Operation(
             summary = "Сброс пароля и создание нового пароля с помощью кода"
     )
-    public ResponseEntity<String> resetPassword(@PathVariable("token") String token,
+    public ResponseEntity<ResponseWithMessage> resetPassword(@PathVariable("token") String token,
                                                 @RequestBody @Valid ResetPasswordDTO resetPasswordDTO) {
         return passwordService.setNewPassword(token, resetPasswordDTO);
     }
@@ -50,7 +51,7 @@ public class PasswordController {
     @Operation(
             summary = "Смена пароля авторизованного пользователя"
     )
-    public ResponseEntity<String> changePasswordOfUser(@RequestBody @Valid ChangePasswordDTO changePasswordDTO,
+    public ResponseEntity<ResponseWithMessage> changePasswordOfUser(@RequestBody @Valid ChangePasswordDTO changePasswordDTO,
                                                        @AuthenticationPrincipal User user) {
         return passwordService.changePasswordOfUser(changePasswordDTO, user);
     }
