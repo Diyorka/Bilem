@@ -1,6 +1,7 @@
 package kg.bilem.service.impls;
 
 import kg.bilem.dto.other.ResponseWithMessage;
+import kg.bilem.dto.other.StudentProgressDTO;
 import kg.bilem.enums.LessonType;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
@@ -67,16 +68,16 @@ public class StudentProgressServiceImpl implements StudentProgressService {
     }
 
     @Override
-    public Integer getStudentProgressPercentageOnCourse(Long courseId, User user) {
+    public ResponseEntity<StudentProgressDTO> getStudentProgressPercentageOnCourse(Long courseId, User user) {
         courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"));
         int totalLessonsCount = lessonRepository.getTotalLessonsCountForCourse(courseId);
         int studentCompletedLessonsCount = studentProgressRepository.getCompletedLessonsCountForStudentInCourse(user.getId(), courseId);
 
         if (totalLessonsCount == 0) {
-            return 0;
+            return ResponseEntity.ok(new StudentProgressDTO(0));
         }
 
-        return (int) (((double) studentCompletedLessonsCount / totalLessonsCount) * 100.0);
+        return ResponseEntity.ok(new StudentProgressDTO((int) (((double) studentCompletedLessonsCount / totalLessonsCount) * 100.0)));
     }
 }

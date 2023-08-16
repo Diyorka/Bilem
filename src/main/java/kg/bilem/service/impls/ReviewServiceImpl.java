@@ -48,7 +48,7 @@ public class ReviewServiceImpl implements ReviewService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с данным айди не найден"));
 
-        if(studentProgressService.getStudentProgressPercentageOnCourse(courseId, user) < 70){
+        if(studentProgressService.getStudentProgressPercentageOnCourse(courseId, user).getBody().getValue() < 70){
             throw new NoAccessException("Вы должны пройти 70% курса, чтобы оставить отзыв");
         }
 
