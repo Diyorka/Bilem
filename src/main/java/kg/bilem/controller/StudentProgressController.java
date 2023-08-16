@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.bilem.dto.other.ResponseWithMessage;
+import kg.bilem.dto.other.StudentProgressDTO;
 import kg.bilem.model.User;
 import kg.bilem.service.StudentProgressService;
 import kg.bilem.service.impls.StudentProgressServiceImpl;
@@ -52,8 +53,8 @@ public class StudentProgressController {
     @Operation(
             summary = "Получить процент прогресса студента на курсе"
     )
-    public Integer getStudentProgressPercentageOnCourse(@PathVariable Long courseId,
-                                              @AuthenticationPrincipal User user){
+    public ResponseEntity<StudentProgressDTO> getStudentProgressPercentageOnCourse(@PathVariable Long courseId,
+                                                                                   @AuthenticationPrincipal User user){
         return studentProgressService.getStudentProgressPercentageOnCourse(courseId, user);
     }
 }
