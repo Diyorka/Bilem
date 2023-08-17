@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bilemdb
-    username: postgres
-    password: 2101
+    url: jdbc:postgresql://localhost:5432/${DB_NAME}
+    username: ${PG_USERNAME}
+    password: ${PG_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -18,8 +18,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: teamtwo.summer@gmail.com
-    password: zzriwjhdygyhxbym
+    username: ${G_EMAIL}
+    password: ${G_PASS}
     properties:
       mail:
         smtp:
