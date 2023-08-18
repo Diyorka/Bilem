@@ -4,6 +4,7 @@ import kg.bilem.dto.lesson.RequestLessonDTO;
 import kg.bilem.dto.lesson.ResponseLessonDTO;
 import kg.bilem.dto.other.ResponseWithMessage;
 import kg.bilem.enums.LessonType;
+import kg.bilem.enums.Role;
 import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
@@ -38,7 +39,9 @@ public class LessonServiceImpl implements LessonService {
         Module module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new NotFoundException("Модуль с таким айди не найден"));
 
-        if (!module.getCourse().getStudents().contains(user) && !user.getEmail().equals(module.getCourse().getOwner().getEmail())) {
+        if (!module.getCourse().getStudents().contains(user)
+            && !user.getEmail().equals(module.getCourse().getOwner().getEmail())
+            && user.getRole() != Role.ADMIN) {
             throw new NoAccessException("Вы не проходите данный курс");
         }
 
@@ -119,7 +122,9 @@ public class LessonServiceImpl implements LessonService {
         Lesson lesson = lessonRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Урок с таким айди не найден"));
 
-        if (user.getStudyingCourses().contains(lesson.getModule().getCourse())){
+        if (!lesson.getModule().getCourse().getStudents().contains(user)
+            && !user.getEmail().equals(lesson.getModule().getCourse().getOwner().getEmail())
+            && user.getRole() != Role.ADMIN){
             throw new NoAccessException("Вы не являетесь студентом данного курса");
         }
 

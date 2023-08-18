@@ -169,7 +169,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public ResponseCourseDTO getCourseById(Long courseId) {
         return toResponseCourseDTO(courseRepository.findById(courseId)
-                .filter(course -> course.getStatus() == Status.ACTIVE)
+                .filter(course -> course.getStatus() != Status.DELETED)
                 .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"))
         );
     }
