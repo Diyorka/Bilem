@@ -3,6 +3,7 @@ package kg.bilem.service.impls;
 import kg.bilem.dto.module.RequestModuleDTO;
 import kg.bilem.dto.module.ResponseModuleDTO;
 import kg.bilem.dto.other.ResponseWithMessage;
+import kg.bilem.enums.Role;
 import kg.bilem.exception.AlreadyExistException;
 import kg.bilem.exception.NoAccessException;
 import kg.bilem.exception.NotFoundException;
@@ -97,7 +98,9 @@ public class ModuleServiceImpl implements ModuleService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Курс с таким айди не найден"));
 
-        if(course.getStudents().contains(user)) {
+        if(!course.getStudents().contains(user)
+            && !course.getOwner().equals(user)
+            && user.getRole() != Role.ADMIN) {
             throw new NoAccessException("Вы не проходите данный курс");
         }
 
